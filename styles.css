@@ -2,3 +2,29 @@
     height: 100vh;
     width: 100%;
  }
+
+div.container {
+    max-width: 75%;
+}
+
+div.absolute {
+    width: 100%;
+    position: absolute;
+    height: 100%;
+  } 
+
+div.bottom-panel-box {
+    position: fixed;
+    height: 350px;
+    border: 3px solid;
+    bottom: 0px;
+}
+
+div.side-panel-box {
+    height: 100%;
+    width: 25%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    border: 3px solid;
+}
