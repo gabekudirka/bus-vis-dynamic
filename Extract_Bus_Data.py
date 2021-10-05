@@ -109,14 +109,14 @@ buses_p60_json = json.dumps(buses_p60)
 buses_p180_json = json.dumps(buses_p180)
 
 # %%
-p20_bus_data = open('./Bus_Data/p20_bus_data.json', 'w')
+p20_bus_data = open('./p20_bus_data.json', 'w')
 p20_bus_data.write(buses_p20_json)
 p20_bus_data.close()
 
-p60_bus_data = open('./Bus_Data/p60_bus_data.json', 'w')
+p60_bus_data = open('./p60_bus_data.json', 'w')
 p60_bus_data.write(buses_p60_json)
 p60_bus_data.close()
 
-p180_bus_data = open('./Bus_Data/p180_bus_data.json', 'w')
+p180_bus_data = open('./p180_bus_data.json', 'w')
 p180_bus_data.write(buses_p180_json)
 p180_bus_data.close()

@@ -17,6 +17,8 @@ module.exports = {
     'max-len': 'off',
     'indent': 'off',
     'comma-dangle': 'off',
-    'import/no-extraneous-dependencies': 'off'
+    'import/no-extraneous-dependencies': 'off',
+    'object-shorthand': 'off',
+    'no-plusplus': 'off',
   },
 };
