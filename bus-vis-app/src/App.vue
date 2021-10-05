@@ -2,28 +2,44 @@
   <div id="page">
     <RoutesList :plan="A" class="left-sidebar"/>
     <div class="main-panel">
-      <div class="top-main">
+      <div class="top-main bottom-border">
         <div class="MAP"> </div>
-        <PlanDetails />
+        <PlanDetails class="left-border right-sidebar"/>
       </div>
-      <BusPanel class="bottom-main"/>
+      <BusPanel v-if="showBus === true" class="bottom-main"/>
+      <StationPanel v-if="showBus === false" :plan="selectedPlan" :stationID="selectedStation" class="bottom-main"/>
     </div>
   </div>
 </template>
 
 <script>
 import BusPanel from './components/BusPanel.vue';
+import StationPanel from './components/StationPanel.vue';
 import PlanDetails from './components/PlanDetails.vue';
 import RoutesList from './components/RoutesList.vue';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// import p60 from '../data/buses/p60.json';
+// import p180 from '../data/buses/p180.json';
+
 export default {
   name: 'App',
   components: {
     BusPanel,
+    StationPanel,
     PlanDetails,
     RoutesList
+  },
+  data() {
+    return {
+      selectedRoute: null,
+      selectedBus: null,
+      selectedStation: 7,
+      selectedPlan: 'A',
+      showBus: false,
+      selectedTime: '7am'
+    };
   },
 };
 </script>
@@ -40,19 +56,40 @@ export default {
 #page{
   display:flex;
   flex-direction:row;
+  height: 90vh;
 }
 .left-sidebar{
   flex:1;
+  overflow-y:auto;
+  height:100%;
 }
+
 .main-panel{
-  flex:4;
+  flex:3;
   display:flex;
   flex-direction:column;
+  height:80vh;
 }
-.MAP{
+.top-main{
   flex:4;
+  display: flex;
+  height:100%;
 }
 .bottom-main{
   flex:1;
+}
+.right-sidebar{
+  flex:1;
+  overflow-y:auto;
+  height:100%;
+}
+.MAP{
+  flex:3;
+}
+.left-border{
+  border-left: 1px solid grey;
+}
+.bottom-border{
+  border-bottom: 1px solid grey;
 }
 </style>
