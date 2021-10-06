@@ -4,8 +4,8 @@ export default createStore({
     state: {
         plan: 'p20',
         selectedBus: '1025',
-        selectedRoute: '45',
-        selectedChargingStation: '7'
+        selectedRoute: '2X',
+        selectedChargingStation: 22256
     },
     getters: {},
     mutations: {
@@ -16,6 +16,7 @@ export default createStore({
             state.selectedBus = busId;
         },
         CHANGE_SELECTED_ROUTE(state, routeId) {
+            console.log(routeId);
             state.selectedRoute = routeId;
         },
         CHANGE_SELECTED_CHARGING_STATION(state, stationId) {
@@ -25,6 +26,16 @@ export default createStore({
     actions: {
         changePlan({ commit }, payload) {
             commit('CHANGE_PLAN', payload);
+        },
+        changeRoute({ commit }, payload) {
+            commit('CHANGE_SELECTED_ROUTE', payload);
+        },
+        changeBus({ commit }, payload) {
+            commit('CHANGE_SELECTED_BUS', payload);
+        },
+        changeStation({ commit }, payload) {
+            commit('CHANGE_SELECTED_STATION', payload);
         }
+
     }
   });
