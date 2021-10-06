@@ -1,13 +1,13 @@
 <template>
   <div id="page">
-    <RoutesList :plan="A" class="left-sidebar"/>
+    <RoutesList class="left-sidebar"/>
     <div class="main-panel">
       <div class="top-main bottom-border">
         <div class="MAP"> </div>
         <PlanDetails class="left-border right-sidebar"/>
       </div>
       <BusPanel v-if="showBus === true" class="bottom-main"/>
-      <StationPanel v-if="showBus === false" :plan="selectedPlan" :stationID="selectedStation" class="bottom-main"/>
+      <StationPanel v-if="showBus === false" class="bottom-main"/>
     </div>
   </div>
 </template>
@@ -33,12 +33,7 @@ export default {
   },
   data() {
     return {
-      selectedRoute: null,
-      selectedBus: null,
-      selectedStation: 7,
-      selectedPlan: 'A',
       showBus: false,
-      selectedTime: '7am'
     };
   },
 };
@@ -68,7 +63,6 @@ export default {
   flex:3;
   display:flex;
   flex-direction:column;
-  height:80vh;
 }
 .top-main{
   flex:4;

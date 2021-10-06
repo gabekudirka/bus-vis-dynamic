@@ -41,7 +41,10 @@ export default {
     methods: {
         selectBus(busNum) {
             this.chosenBus = busNum;
-            this.$emit('clicked', { routeID: this.id, busNo: busNum });
+            if (this.$store.state.selectedRoute !== this.route.lineAbbr) {
+                this.$store.dispatch('changeRoute', this.route.lineAbbr);
+            }
+            this.$store.dispatch('changeBus', busNum);
         },
      }
 

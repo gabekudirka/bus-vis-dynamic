@@ -1,12 +1,11 @@
 <template>
   <div>
     <ul id="routeList">
-        <li v-for="(item, i) in routeItems" :key="i">
+        <li v-for="(item, i) in routeItems" :key="item.lineAbbr">
             <RouteItem
                 :id="i"
                 :route="item"
-                :selected="i === selectedRoute"
-                @clicked="onClickRoute"
+                :selected="item.lineAbbr === selectedRoute"
             />
         </li>
     </ul>
@@ -22,43 +21,19 @@ export default {
     components: {
         RouteItem,
     },
-    props: {
-        plan: {
-            type: String,
-            required: true
-        },
-    },
     data() {
         return {
             routeItems: routes,
-            selectedRoute: 0,
-            selectedBus: null
         };
     },
-    // computed: {
-    //     routeItems: function() {
-    //         console.log(this.convJson(routes));
-    //         return this.convJson(routes);
-    //     },
-    // },
-     methods: {
-        onClickRoute(value) {
-            console.log('click route');
-            console.log(value);
-            if (this.selectedRoute !== value.routeID) {
-                this.selectedRoute = value.routeID;
-            }
-            this.selectedBus = value.busNo;
+    computed: {
+        plan: function () {
+            return this.$store.state.plan;
         },
-        // selectItem(i) {
-        //     if (this.selectedRoute !== i) {
-        //         console.log('changing');
-        //         this.selectedRoute = i;
-        //     }
-        //     console.log(this.routeItems[i]);
-        //     console.log(this.routeItems[i].busses[0]);
-        // },
-     }
+        selectedRoute: function () {
+            return this.$store.state.selectedRoute;
+        }
+    },
 };
 
 </script>
