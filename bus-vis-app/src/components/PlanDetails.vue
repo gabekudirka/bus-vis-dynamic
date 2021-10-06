@@ -4,7 +4,7 @@
     <div class="row plan-select-row">
         <div>
             <label for="plan-select">Select a deployment plan:</label>
-            <select  v-model="planselect" name="plan-select" id="plan-select">
+            <select @change="changePlan()" v-model="planselect" name="plan-select" id="plan-select">
                 <option value="Plan 1">Plan 1</option>
                 <option value="Plan 2">Plan 2</option>
                 <option value="Plan 3">Plan 3</option>
@@ -64,16 +64,35 @@ export default {
     },
     computed: {
         planData: function () {
-            if (this.planselect === 'Plan 1') {
-                return p20;
-            } if (this.planselect === 'Plan 2') {
-                return p60;
-            } if (this.planselect === 'Plan 3') {
-                return p180;
+            switch (this.planselect) {
+                case 'Plan 1':
+                    return p20;
+                case 'Plan 2':
+                    return p60;
+                case 'Plan 3':
+                    return p180;
+                default:
+                    return p20;
             }
-                return p20;
         }
     },
+    methods: {
+        changePlan() {
+            switch (this.planselect) {
+                case 'Plan 1':
+                    this.$store.dispatch('changePlan', 'p20');
+                    break;
+                case 'Plan 2':
+                    this.$store.dispatch('changePlan', 'p60');
+                    break;
+                case 'Plan 3':
+                    this.$store.dispatch('changePlan', 'p180');
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 };
 
 </script>

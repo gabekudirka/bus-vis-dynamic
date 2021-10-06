@@ -3,7 +3,7 @@ import { createStore } from 'vuex';
 export default createStore({
     state: {
         plan: 'p20',
-        selectedBus: '1026',
+        selectedBus: '1025',
         selectedRoute: '45',
         selectedChargingStation: '7'
     },
@@ -23,8 +23,8 @@ export default createStore({
         },
     },
     actions: {
-        changeBus({ commit }, payload) {
-            commit('CHANGE_SELECTED_BUS', payload);
+        changePlan({ commit }, payload) {
+            commit('CHANGE_PLAN', payload);
         }
     }
   });
