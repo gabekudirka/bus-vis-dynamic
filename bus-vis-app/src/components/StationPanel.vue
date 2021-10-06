@@ -18,16 +18,6 @@ import stopsList from '../data/allStops.json';
 
 export default {
     name: 'StationPanel',
-    props: {
-        // plan: {
-        //     type: String,
-        //     required: true
-        // },
-        // stationID: {
-        //     type: Number,
-        //     required: true
-        // }
-    },
     computed: {
         plan: function () {
             return this.$store.state.plan;
