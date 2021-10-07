@@ -20,9 +20,6 @@ import RoutesList from './components/RoutesList.vue';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// import p60 from '../data/buses/p60.json';
-// import p180 from '../data/buses/p180.json';
-
 export default {
   name: 'App',
   components: {
