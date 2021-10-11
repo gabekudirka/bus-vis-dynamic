@@ -54,7 +54,7 @@ def Extract_Bus_Data(raw_deployment_data, UTA_schedule_df, UTA_stops_df, env_imp
         bus.converted = Z[bus_id]
         bus_runcut_data = UTA_schedule_df.loc[UTA_schedule_df['block_num'] == int(bus_id)]
         bus.line = bus_runcut_data['LineAbbr'].iloc[0]
-        bus.environmental_equity = env_impact_df.loc[env_impact_df['block_num'] == int(bus_id), 'Ei'].iloc[0]
+        bus.environmental_equity = round(float(env_impact_df.loc[env_impact_df['block_num'] == int(bus_id), 'Ei'].iloc[0]), 1)
         if bus_id in m:
             for i in range(len(bus_runcut_data) + 1):
                 distance_traveled = m[bus_id][i]
@@ -90,8 +90,8 @@ def Extract_Bus_Data(raw_deployment_data, UTA_schedule_df, UTA_stops_df, env_imp
                     "arrival_time": arrival_time,
                     "departure_time": departure_time,
                     "direction": direction,
-                    "distance_traveled": distance_traveled,
-                    "remaining_charge": remaining_charge,
+                    "distance_traveled": round(distance_traveled, 1),
+                    "remaining_charge": round(remaining_charge, 1),
                     "is_charging": is_charging
                 }
                 bus.stops.append(stop_data)
