@@ -10,6 +10,9 @@
           <p> Bus Line: {{ bus.line }} </p>
         </div>
         <div class="row">
+          <p> Converted: {{ bus.converted }} </p>
+        </div>
+        <div class="row">
           <p> Bus Status: On Route </p>
         </div>
         <div class="row">
@@ -42,6 +45,9 @@ export default {
     computed: {
         busId: function () {
             return this.$store.state.selectedBus;
+        },
+        plan: function () {
+            return this.$store.state.plan;
         },
         bus: function () {
             switch (this.$store.state.plan) {
