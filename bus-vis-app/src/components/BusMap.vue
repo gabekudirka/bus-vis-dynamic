@@ -1,96 +1,65 @@
-/* eslint-disable max-len */
 <template>
-  <div class="container bottom-panel-box">
-    <div class="row absolute">
-      <div class="col-5 border">
-            Bus ID: {{ bus.id }}
-          <p> Bus Line: {{ bus.line }} </p>
-          <p> Converted: {{ bus.converted }} </p>
-          <p> Bus Status: On Route </p>
-          <p> Last Stop: {{ bus.stops[0].stop_name }} </p>
-          <p> Bus Environmental Impact: {{ bus.environmental_equity }} </p>
-      </div>
-      <div class="col border">Charge level over time</div>
-      <div class="col border">Electricity usage</div>
-    </div>
-  </div>
+ <div>
+   <div id="mapContainer"></div>
+ </div>
 </template>
 
 <script>
-import p20 from '../data/buses/p20.json';
-import p60 from '../data/buses/p60.json';
-import p180 from '../data/buses/p180.json';
-
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
+import L from 'leaflet';
+import busRoutes from '../data/BusRoutes_UTA.json';
+// import busStops from '../data/BusStops_UTA.json';
 
 export default {
-    name: 'BusPanel',
+    name: 'BusMap',
     data() {
         return {
-            p20,
-            p60,
-            p180,
+            center: [40.7608, -111.8910],
+            busMap: null,
         };
     },
-    computed: {
-        busId: function () {
-            return this.$store.state.selectedBus;
-        },
-        plan: function () {
-            return this.$store.state.plan;
-        },
-        bus: function () {
-            switch (this.$store.state.plan) {
-                case 'p20':
-                    return this.p20Dict[this.busId];
-                case 'p60':
-                    return this.p60Dict[this.busId];
-                case 'p180':
-                    return this.p180Dict[this.busId];
-                default:
-                    return this.p20Dict[this.busId];
-            }
-        },
-        p20Dict: function () {
-            return this.jsonToDict(p20);
-        },
-        p60Dict: function () {
-            return this.jsonToDict(p60);
-        },
-        p180Dict: function () {
-            return this.jsonToDict(p180);
-        },
+    mounted() {
+        this.busMap = L.map('mapContainer').setView(this.center, 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(this.busMap);
+
+        const routeStyle = {
+            color: 'blue',
+            opacity: 0.5,
+            weight: 2
+        };
+        L.geoJson(busRoutes, { style: routeStyle }).addTo(this.busMap);
+        // const geojsonMarkerOptions = {
+        //     radius: 1,
+        //     fillColor: 'red',
+        //     color: '#000',
+        //     weight: 1,
+        //     opacity: 0.8,
+        //     fillOpacity: 0.8
+        // };
+
+        // L.geoJson(busStops, {
+        //     pointToLayer: function (feature, latlng) {
+        //         return L.circleMarker(latlng, geojsonMarkerOptions);
+        //     }
+        // }).addTo(this.busMap);
     },
-    methods: {
-        jsonToDict(jsonData) {
-            const buses = {};
-            const busData = jsonData;
-            for (let i = 0; i < busData.buses.length; i++) {
-                const bus = busData.buses[i];
-                buses[bus.id] = bus;
-            }
-            return buses;
-        }
+    beforeUnmount() {
+    if (this.busMap) {
+      this.busMap.remove();
     }
+  }
 };
 
 </script>
 
-<style>
-div.container {
-  max-width: 80%;
-}
-
-div.absolute {
-  width: 100%;
-  position: absolute;
-  height: 100%;
-}
-
-div.bottom-panel-box {
-  position: fixed;
-  height: 350px;
-  border-top: 3px solid;
-  bottom: 0px;
-  left: 20%;
+<style scoped>
+#mapContainer {
+    /* Not sure how to handle the height here */
+    width: 100%;
+    height: 70vh;
 }
 </style>

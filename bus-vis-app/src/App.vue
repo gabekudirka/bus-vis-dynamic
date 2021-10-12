@@ -3,7 +3,9 @@
     <RoutesList class="left-sidebar"/>
     <div class="main-panel">
       <div class="top-main bottom-border">
-        <div class="MAP"> </div>
+        <div class="MAP">
+          <BusMap />
+        </div>
         <PlanDetails class="left-border right-sidebar"/>
       </div>
       <BusPanel v-if="showBus === true" class="bottom-main"/>
@@ -17,6 +19,7 @@ import BusPanel from './components/BusPanel.vue';
 import StationPanel from './components/StationPanel.vue';
 import PlanDetails from './components/PlanDetails.vue';
 import RoutesList from './components/RoutesList.vue';
+import BusMap from './components/BusMap.vue';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -26,7 +29,8 @@ export default {
     BusPanel,
     StationPanel,
     PlanDetails,
-    RoutesList
+    RoutesList,
+    BusMap
   },
   data() {
     return {
@@ -51,6 +55,7 @@ export default {
   height: 90vh;
 }
 .left-sidebar{
+  max-width:450px;
   flex:1;
   overflow-y:auto;
   height:100%;
@@ -70,6 +75,7 @@ export default {
   flex:1;
 }
 .right-sidebar{
+  max-width:450px;
   flex:1;
   overflow-y:auto;
   height:100%;
@@ -77,6 +83,7 @@ export default {
 .MAP{
   flex:3;
 }
+
 .left-border{
   border-left: 1px solid grey;
 }
