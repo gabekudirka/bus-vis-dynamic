@@ -54,7 +54,7 @@ def Extract_Bus_Data(raw_deployment_data, UTA_schedule_df, UTA_stops_df, env_imp
         bus.converted = Z[bus_id]
         bus_runcut_data = UTA_schedule_df.loc[UTA_schedule_df['block_num'] == int(bus_id)]
         bus.line = bus_runcut_data['LineAbbr'].iloc[0]
-        bus.environmental_equity = env_impact_df.loc[env_impact_df['block_num'] == int(bus_id), 'Ei'].iloc[0]
+        bus.environmental_equity = round(float(env_impact_df.loc[env_impact_df['block_num'] == int(bus_id), 'Ei'].iloc[0]), 1)
         if bus_id in m:
             for i in range(len(bus_runcut_data) + 1):
                 distance_traveled = m[bus_id][i]
@@ -78,20 +78,20 @@ def Extract_Bus_Data(raw_deployment_data, UTA_schedule_df, UTA_stops_df, env_imp
                         departure_time = bus_runcut_data['FromTime'].iloc[i]
                         direction = bus_runcut_data['DirectionName'].iloc[i]
 
-                if stop_name in UTA_stops_df['stop_name']:
+                if stop_name in UTA_stops_df.values:
                     stop_id = UTA_stops_df.loc[UTA_stops_df['stop_name'] == stop_name,'stop_id'].iloc[0]
                 else:
                     stop_id = new_stop_id
                     new_stop_id += 1
 
                 stop_data = {
-                    "stop_id": stop_id,
+                    "stop_id": int(stop_id),
                     "stop_name": stop_name,
                     "arrival_time": arrival_time,
                     "departure_time": departure_time,
                     "direction": direction,
-                    "distance_traveled": distance_traveled,
-                    "remaining_charge": remaining_charge,
+                    "distance_traveled": round(distance_traveled, 1),
+                    "remaining_charge": round(remaining_charge, 1),
                     "is_charging": is_charging
                 }
                 bus.stops.append(stop_data)
@@ -101,8 +101,8 @@ def Extract_Bus_Data(raw_deployment_data, UTA_schedule_df, UTA_stops_df, env_imp
     return buses
 # %%
 buses_p20 = Extract_Bus_Data(p20_data, UTA_runcut_df, UTA_stops_df, bus_env_impact_df)
-buses_p60 = Extract_Bus_Data(p20_data, UTA_runcut_df, UTA_stops_df, bus_env_impact_df)
-buses_p180 = Extract_Bus_Data(p20_data, UTA_runcut_df, UTA_stops_df, bus_env_impact_df)
+buses_p60 = Extract_Bus_Data(p60_data, UTA_runcut_df, UTA_stops_df, bus_env_impact_df)
+buses_p180 = Extract_Bus_Data(p180_data, UTA_runcut_df, UTA_stops_df, bus_env_impact_df)
 
 buses_p20_json = json.dumps(buses_p20)
 buses_p60_json = json.dumps(buses_p60)

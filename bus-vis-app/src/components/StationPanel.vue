@@ -29,7 +29,7 @@ export default {
             if (this.plan === 'p20') {
                 console.log(p20.charging_stations);
                 return p20.charging_stations;
-            } if (this.plan === 'p80') {
+            } if (this.plan === 'p60') {
                 return p60.charging_stations;
             }
             return p180.charging_stations;

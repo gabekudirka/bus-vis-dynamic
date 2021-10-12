@@ -31,7 +31,7 @@ def Extract_Plan_Data(raw_deployment_data, UTA_stops_df, plan_name):
     for i, line in enumerate(raw_deployment_data):
         if line[0] == '#':
             line_arr = line.split()
-            plan.env_equity = float(line_arr[-1].strip())
+            plan.env_equity = round(float(line_arr[-1].strip()), 1)
         if line[0] == 'Z':
             Z_data = line[1:].strip().split(" ")
             Z[Z_data[0]] = int(Z_data[1])
@@ -62,7 +62,7 @@ def Extract_Plan_Data(raw_deployment_data, UTA_stops_df, plan_name):
                 
     plan.converted_buses = converted_buses
     plan.num_buses = len(converted_buses)
-    plan.num_miles = total_miles
+    plan.num_miles = round(total_miles, 1)
     plan.num_charging_stations = total_charging_stations
 
     return plan

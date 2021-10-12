@@ -1,7 +1,7 @@
 /* eslint-disable */
 <template>
 <div class="container side-panel-box">
-    <div class="row plan-select-row">
+    <div class="row">
         <div>
             <label for="plan-select">Select a deployment plan:</label>
             <select @change="changePlan()" v-model="planselect" name="plan-select" id="plan-select">
@@ -11,29 +11,28 @@
             </select>
         </div>
     </div>
-    <div class="row">
-        <h2 id="plan">{{ planselect }}</h2>
+    <div id="plan-name" class="row left-align">
+        <h2>{{ planselect }}</h2>
     </div>
-    <div id="plan-details" class="row">
-        <div>
-        <ul id="plan-list">
+    <div id="plan-details" class="row left-align">
+        <ul>
             <li>
-                <p>Total Cost of the plan</p>
+                <p> <b>Total Cost of the plan: </b> <br> {{ planCost }} </p>
             </li>
             <li>
-                <p>Plan Environmental Equity:<br> {{ planData.env_equity }}</p>
+                <p> <b> Plan Environmental Equity: </b> <br> {{ planData.env_equity }}</p>
             </li>
             <li>
-                <p>Number of buses converted:<br> {{ planData.num_buses }}</p>
+                <p> <b> Number of buses converted: </b> <br> {{ planData.num_buses }}</p>
             </li>
             <li>
-                <p>Total miles electrified:<br>{{ planData.num_miles }}</p>
+                <p> <b> Total miles electrified: </b> <br>{{ planData.num_miles }}</p>
             </li>
             <li>
-                <p>Number of charging stations to be built:<br> {{ planData.num_charging_stations }}</p>
+                <p> <b> Number of charging stations to be built: </b> <br> {{ planData.num_charging_stations }}</p>
             </li>
             <li>
-                <p>Locations of charging locations</p>
+                <p><b> Locations of charging locations: </b></p>
                 <ul id="charging-station-locations" class="scroll">
                     <li v-for="station in planData.charging_stations" :key="station.stop_name">
                         {{station.num_stations}} station built at {{ station.stop_name }}
@@ -42,7 +41,6 @@
                 <br>
             </li>
         </ul>
-    </div>
     </div>
 </div>
 </template>
@@ -56,36 +54,30 @@ export default {
     name: 'PlanDetails',
     data() {
         return {
-            planselect: '',
             p20,
             p60,
             p180,
+            planselect: 'Plan 1',
+            planCost: '$20,000,000',
+            planData: p20
         };
-    },
-    computed: {
-        planData: function () {
-            switch (this.planselect) {
-                case 'Plan 1':
-                    return p20;
-                case 'Plan 2':
-                    return p60;
-                case 'Plan 3':
-                    return p180;
-                default:
-                    return p20;
-            }
-        }
     },
     methods: {
         changePlan() {
             switch (this.planselect) {
                 case 'Plan 1':
+                    this.planData = p20;
+                    this.planCost = '$20,000,000';
                     this.$store.dispatch('changePlan', 'p20');
                     break;
                 case 'Plan 2':
+                    this.planData = p60;
+                    this.planCost = '$60,000,000';
                     this.$store.dispatch('changePlan', 'p60');
                     break;
                 case 'Plan 3':
+                    this.planData = p180;
+                    this.planCost = '$180,000,000';
                     this.$store.dispatch('changePlan', 'p180');
                     break;
                 default:
@@ -94,40 +86,36 @@ export default {
         }
     }
 };
-
 </script>
 
 <style>
-
-div.plan-select-row {
-    padding-top: 10px;
-}
-
-div.side-panel-box {
-    width: 20%;
-    position: fixed;
-    bottom: 350px;
-    top: 0;
-    right: 0;
-    border-left: 3px solid;
-}
-
 ul {
     padding: 0;
     list-style-type: none;
 }
 
-#plan-list {
-    height: 450px;
-}
-
 #charging-station-locations {
+    /* This should be changed to be dynamic*/
     height: 300px;
 }
 
-.scroll {
-    overflow: hidden;
-    overflow-y: scroll;
+#plan-name {
+    text-align: left;
+    padding-left: 1em;
+    padding-bottom: 0.25em;
 }
 
+.scroll {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.left-align{
+    text-align: left;
+    padding: 1em;
+}
+
+p{
+    margin-bottom:0.5em !important;
+}
 </style>
