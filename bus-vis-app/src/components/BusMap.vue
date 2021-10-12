@@ -13,6 +13,13 @@ import busRoutes from '../data/BusRoutes_UTA.json';
 
 export default {
     name: 'BusMap',
+    props: {
+        // array of objects {busID: ID, coordinates: [lat,long]}
+        busLocations: {
+            type: Array,
+            required: true
+        }
+    },
     data() {
         return {
             center: [40.7608, -111.8910],

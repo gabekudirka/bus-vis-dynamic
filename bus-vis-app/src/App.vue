@@ -4,9 +4,6 @@
     <div class="main-panel">
       <div class="top-main bottom-border">
         <MapPanel class="MAP" :planBusses="planBusses"> </MapPanel>
-        <div class="MAP">
-          <BusMap />
-        </div>
         <PlanDetails class="left-border right-sidebar"/>
       </div>
       <BusPanel v-if="showBus === true" class="bottom-main"/>
@@ -21,7 +18,6 @@ import StationPanel from './components/StationPanel.vue';
 import MapPanel from './components/MapPanel.vue';
 import PlanDetails from './components/PlanDetails.vue';
 import RoutesList from './components/RoutesList.vue';
-import BusMap from './components/BusMap.vue';
 import p20 from './data/plans/p20.json';
 import p60 from './data/plans/p60.json';
 import p180 from './data/plans/p180.json';
@@ -35,8 +31,7 @@ export default {
     StationPanel,
     MapPanel,
     PlanDetails,
-    RoutesList,
-    BusMap
+    RoutesList
   },
   data() {
     return {

@@ -1,6 +1,7 @@
 /* eslint-disable max-len no-continue */
 <template>
-    <div class="MAP"> {{ busLocations[0] }}
+    <div>
+        <BusMap class="MAP" :busLocations="busLocations"/>
     </div>
 </template>
 
@@ -9,9 +10,13 @@
 import p20 from '../data/buses/p20.json';
 import stopsList from '../data/allStops.json';
 import routesList from '../data/allRoutes.json';
+import BusMap from './BusMap.vue';
 
 export default {
     name: 'MapPanel',
+    components: {
+        BusMap,
+    },
     props: {
         planBusses: {
             type: Object
@@ -27,23 +32,31 @@ export default {
             p20.buses.forEach((bus) => {
                 for (let i = 0; i < bus.stops.length; i++) {
                     const stp = bus.stops[i];
-                    // if arv <= t <= dpt  -> at stop
-                    const stpatime = (stp.arrival_time === '') ? '00:00' : stp.arrival_time;
-                    if ((this.timeIsGreaterEqTo(this.time, stpatime) && this.timeIsGreaterEqTo(stp.departure_time, this.time)) || stp.departure_time === '') {
+                    // if arv <= t <= dpt   -> at stop
+                    const arvtime = (stp.arrival_time === '') ? '00:00' : stp.arrival_time;
+                    const deptime = (stp.departure_time === '') ? '23:59' : stp.departure_time;
+                    if (this.timeIsGreaterEqTo(this.time, arvtime) && this.timeIsGreaterEqTo(deptime, this.time)) {
                         const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
+                        // TODO: add atStation if at charging station?
                         if (stationObj) {
                             busLocations.push({ busID: bus.id, coordinates: stationObj.coordinates });
                             break;
                         }
-                    // if dpt <= t <= next.arv  -> between stops
-                    } else if (this.timeIsGreaterEqTo(this.time, stp.departure_time) && this.timeIsGreaterEqTo(bus.stops[i + 1].arrival_time, this.time)) {
+                    // if dpt <= t <= next.arv   -> between stops
+                    } else if (this.timeIsGreaterEqTo(this.time, deptime) && this.timeIsGreaterEqTo(bus.stops[i + 1].arrival_time, this.time)) {
                         // calc coords
                         const coords = this.calcBusCoords(stp, bus.stops[i + 1], bus.line);
                         if (coords !== '') {
                             busLocations.push({ busID: bus.id, coordinates: coords });
                             break;
-                        }             
-                    } else if (this.timeIsGreaterEqTo(stpatime, this.time)) {
+                        }  
+                    // t <= arv   -> usually means bus has not left the station for the day        
+                    } else if (this.timeIsGreaterEqTo(arvtime, this.time)) {
+                        const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
+                        if (stationObj) {
+                            busLocations.push({ busID: bus.id, coordinates: stationObj.coordinates });
+                            break;
+                        }
                         break;
                     }
                 }
@@ -58,7 +71,7 @@ export default {
             const totalTime = stop2atime - stop1.departure_time;
             const route = routesList.find((rt) => rt.lineAbbr === line); // shape_length
             const scaledLen = (this.time * route.shape_len) / totalTime; // use time ratio to calc distance traveled
-            
+            // sum distance between each stop until we reach the distance traveled, then return those coordinates
             let sumDist = 0;
             for (let i = 0; i < route.coordinates.length; i++) {
                 if (i === 0) {
@@ -75,7 +88,7 @@ export default {
             }
             return '';
         },
-        // returns true if t1 is >= t2
+        // returns true if t1 is >= t2. Only for military time
         timeIsGreaterEqTo(t1, t2) {
             const hr1 = parseInt(t1.split(':')[0], 10);
             const hr2 = parseInt(t2.split(':')[0], 10);
