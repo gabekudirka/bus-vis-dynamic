@@ -21,11 +21,8 @@ export default {
         time: function () {
             return this.$store.state.time;
         },
-        // plan: function () {
-        //     return this.$store.state.plan;
-        // },
-        // return object of bus current locations
-        busLocations: function () { // TODO FINISH
+        // returns array of {busID: ID, coordinates: [lat,long]}
+        busLocations: function () { 
             const busLocations = [];
             p20.buses.forEach((bus) => {
                 for (let i = 0; i < bus.stops.length; i++) {
