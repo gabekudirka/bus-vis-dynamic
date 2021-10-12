@@ -20,5 +20,8 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'object-shorthand': 'off',
     'no-plusplus': 'off',
-  },
+    'no-trailing-spaces': 'off',
+    'no-unused-vars': 'off',
+    'no-continue': 'off'
+    },
 };
