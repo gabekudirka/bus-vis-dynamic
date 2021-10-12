@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 <template>
     <div class="left-align">
-        <h4>Station: {{selectedStation.StopId}} </h4>
-        <p>Located at: {{selectedStation.StopName}} </p>
+        <h4>Station: {{selectedStation.stopId}} </h4>
+        <p>Located at: {{selectedStation.stopName}} </p>
         <p>Busses currently @ station: bus2, bus5, bus8</p>
         <p>Current station power output: 3000 powers </p>
         <p>Busses visited station so far: 5/23 </p>
@@ -37,7 +37,7 @@ export default {
         stations: function () {
             const list = [];
             this.planStations.forEach((station) => {
-                const st = stopsList.find((stop) => stop.StopName === station.stop_name);
+                const st = stopsList.find((stop) => stop.stopName === station.stop_name);
                 // TODO: use filter?? Multiple stops with same name but diff ids...
                 list.push({ ...station, ...st, converted: true });
             });
@@ -46,10 +46,10 @@ export default {
         },
         selectedStation: function () {
             // try to find a charging station @ stop
-            let st = this.stations.find((station) => station.StopId === this.stationID);
+            let st = this.stations.find((station) => station.stopId === this.stationID);
             // otherwise just show stop info
             if (!st) {
-                st = stopsList.find((stop) => stop.StopId === this.stationID);
+                st = stopsList.find((stop) => stop.stopId === this.stationID);
             }
             console.log('here');
             console.log(st);

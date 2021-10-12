@@ -5,7 +5,8 @@ export default createStore({
         plan: 'p20',
         selectedBus: '1025',
         selectedRoute: '2X',
-        selectedChargingStation: 22256
+        selectedChargingStation: 22256,
+        time: '4:00'
     },
     getters: {},
     mutations: {
@@ -22,6 +23,9 @@ export default createStore({
         CHANGE_SELECTED_CHARGING_STATION(state, stationId) {
             state.selectedChargingStation = stationId;
         },
+        CHANGE_TIME(state, time) {
+            state.time = time;
+        },
     },
     actions: {
         changePlan({ commit }, payload) {
@@ -35,7 +39,10 @@ export default createStore({
         },
         changeStation({ commit }, payload) {
             commit('CHANGE_SELECTED_STATION', payload);
-        }
+        },
+        changeTime({ commit }, payload) {
+            commit('CHANGE_TIME', payload);
+        },
 
     }
   });
