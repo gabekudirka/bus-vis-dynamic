@@ -1,10 +1,32 @@
 /* eslint-disable max-len */
 <template>
     <div class="left-align">
-        <h4>Station: {{selectedStation.stopId}} </h4>
-        <p>Located at: {{selectedStation.stopName}} </p>
-        <p>Busses currently @ station: {{ bussesAtStation }}</p>
-        <p>Current station power output: {{ bussesAtStation.length * powerOutPerBus}} </p>
+        <h4>
+            <i class="fas fa-charging-station"></i>
+             {{selectedStation.stopName}} 
+        </h4>
+        <div class="sidebyside">
+            <table id="stationInfo" class="flex1">
+                <tr>
+                    <td> UTA Stop ID </td>
+                    <td> {{selectedStation.stopId}} </td>
+                </tr>
+                <tr> 
+                    <td>Busses @ Station </td>
+                    <td class="sidebyside">
+                        <div v-for="bus in bussesAtStation" :key="bus" class="busnum">
+                            {{bus}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Current Power Output </td>
+                    <td> {{ bussesAtStation.length * powerOutPerBus}} </td>
+                </tr>
+            </table>
+            <div class="flex1"> PUT CHART1 HERE </div>
+            <div class="flex1"> PUT CHART2 HERE </div>
+        </div>
     </div>
 </template>
 
@@ -73,7 +95,6 @@ export default {
             // busLocations show up as proxy object (figure out why) so we have to check each coordinate seperatesly
             const busses = this.busLocations.filter((bus) => (bus.coordinates[0] === this.selectedStation.coordinates[0]) 
                                                             && (bus.coordinates[1] === this.selectedStation.coordinates[1]));
-            
             return busses.map((b) => b.busID);
         }
     },
@@ -85,9 +106,34 @@ export default {
 <style>
 .left-align{
     text-align: left;
-    padding:1em;
+    padding:.6em;
 }
 p{
-    margin-bottom:0.5em !important;
+    margin: 0.2em !important;
 }
+.sidebyside {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.flex1 {
+    flex: 1;
+    padding: .2em;
+}
+.busnum {
+    padding:0 .1em;
+}
+#stationInfo{
+    border: 1px solid #efefef;
+}
+#stationInfo > tr > td:first-child{ 
+    font-weight: bold;
+    background-color: #efefef;
+    border-bottom: 1px solid white;
+}
+td {
+    padding: 0.2em;
+    border-bottom: 1px solid #efefef;
+}
+
 </style>

@@ -2,18 +2,18 @@
 <template>
 <div class="container side-panel-box">
     <div class="row">
-        <div>
-            <label for="plan-select">Select a deployment plan:</label>
+        <div style="padding:1em">
+            <!-- <label for="plan-select">Deployment plan:</label> -->
             <select @change="changePlan()" v-model="planselect" name="plan-select" id="plan-select">
-                <option value="Plan 1">Plan 1</option>
-                <option value="Plan 2">Plan 2</option>
-                <option value="Plan 3">Plan 3</option>
+                <option value="Plan 1">Deployment Plan 1</option>
+                <option value="Plan 2">Deployment Plan 2</option>
+                <option value="Plan 3">Deployment Plan 3</option>
             </select>
         </div>
     </div>
-    <div id="plan-name" class="row left-align">
+    <!-- <div id="plan-name" class="row left-align">
         <h2>{{ planselect }}</h2>
-    </div>
+    </div> -->
     <div id="plan-details" class="row left-align">
         <ul>
             <li>
@@ -117,5 +117,15 @@ ul {
 
 p{
     margin-bottom:0.5em !important;
+}
+
+select {
+    border-radius: 8px;
+    border: none;
+    padding: 7px;
+    background-color: #efefef;
+}
+select:focus-visible {
+    outline: none
 }
 </style>
