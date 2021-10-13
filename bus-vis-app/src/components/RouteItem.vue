@@ -1,5 +1,5 @@
 <template>
-  <div class="underline" >
+  <div>
     <div class="routeName"
         @click="selectBus(route.busses[0])"
     > {{route.lineAbbr}}: {{ route.lineName }} </div>
@@ -53,12 +53,9 @@ export default {
 </script>
 
 <style>
-.underline{
-    border-bottom: 1px solid grey;
-}
 .routeName{
     text-align: left;
-    padding: 0.3em;
+    padding: 0.6em;
 }
 .busName{
     padding: 0.1em;
@@ -66,7 +63,8 @@ export default {
     text-align:left;
 }
 .activeBus{
-    color: red;
+    color: white;
+    background-color: lightseagreen;
 }
 
 </style>

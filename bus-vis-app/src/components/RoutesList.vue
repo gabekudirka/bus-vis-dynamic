@@ -43,6 +43,9 @@ export default {
     overflow-x: hidden;
     overflow-y: auto;
 }
+ul#routeList > li:nth-of-type(odd) {
+    background-color: #f1f1f1;
+}
 /* div.container {
   max-width: 80%;
 } */

@@ -60,7 +60,7 @@ export default {
 #page{
   display:flex;
   flex-direction:row;
-  height: 90vh;
+  height: 100vh;
 }
 .left-sidebar{
   max-width:30vw;

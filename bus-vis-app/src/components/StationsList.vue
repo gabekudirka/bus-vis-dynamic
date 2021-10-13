@@ -3,7 +3,7 @@
     <ul id="stationsList">
         <li v-for="item in planStations" 
             :key="item.stop_id"
-            :class="[item.stop_id == selectedStation ? 'selected' : '', 'underline']"
+            :class="[item.stop_id == selectedStation ? 'selected' : '', 'listItem']"
             @click="selectItem(item.stop_id)"
         >
             {{ item.stop_name }} {{ item.stop_id}}
@@ -64,13 +64,16 @@ export default {
 </script>
 
 <style>
-.underline{
-    border-bottom: 1px solid grey;
+.selected {
+    color: white;
+    background: lightseagreen !important;
+}
+ul#stationsList > li:nth-of-type(odd) {
+    background-color: #f1f1f1;
+}
+.listItem{
     padding: 0.6em;
     text-align:left;
-}
-.selected {
-    color: red;
 }
 
 </style>

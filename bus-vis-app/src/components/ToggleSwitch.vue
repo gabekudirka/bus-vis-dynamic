@@ -44,7 +44,7 @@ export default {
     margin-bottom: 10px;
 }
 .toggle {
-    padding: 2px 35x ;
+    padding: 2px 6px ;
 }
 .toggle-switch > .toggle:first-of-type {
     border-top-left-radius: 8px;
@@ -59,10 +59,12 @@ export default {
     border-bottom-right-radius: 8px;
 }
 button{
-    border: none;
+    border: 1.5px solid lightseagreen;
+    color: lightseagreen;
 }
 .active{
     background-color: lightseagreen;
+    color: white;
 }
 
 /* div.container {
