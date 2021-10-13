@@ -3,7 +3,10 @@
   <div class="container-fluid bottom-panel-box">
     <div class="row">
       <div class="col-5 left-align">
-          <p class="bus-header"> <b> Bus ID: {{ bus.id }} </b> </p>
+          <h4>
+            <i class="fas fa-bus"></i>
+            Bus {{ bus.id }} 
+          </h4>
           <p> Bus Line: {{ bus.line }} </p>
           <p> Converted: {{ bus.converted }} </p>
           <p> Bus Status: On Route </p>
@@ -108,8 +111,8 @@ export default {
             );
 
             return svg;
-            const xAccessor = (pt) => pt.time;
-            const yAccessor = (pt) => pt.charge;
+            // const xAccessor = (pt) => pt.time;
+            // const yAccessor = (pt) => pt.charge;
 
             // const yScale = d3
             //     .scaleLinear()
