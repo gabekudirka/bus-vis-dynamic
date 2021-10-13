@@ -23,6 +23,7 @@ module.exports = {
     'no-trailing-spaces': 'off',
     'no-unused-vars': 'off',
     'no-continue': 'off',
-    'prefer-template' : 'off'
+    'prefer-template' : 'off',
+    'arrow-parens': 'off'
     },
 };
