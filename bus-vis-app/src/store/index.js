@@ -6,7 +6,7 @@ export default createStore({
         selectedBus: '1025',
         selectedRoute: '2X',
         selectedChargingStation: '7',
-        time: '4:00',
+        time: '12:20',
         showBusses: true,
         busLocations: []
     },
@@ -56,6 +56,7 @@ export default createStore({
             commit('CHANGE_SHOW_BUSSES', payload);
         },
         changeBusLocations({ commit }, payload) {
+            console.log('changebuslocs', payload[0]);
             commit('CHANGE_BUS_LOCATIONS', payload);
         },
 

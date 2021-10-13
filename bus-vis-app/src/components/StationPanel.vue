@@ -20,7 +20,7 @@ export default {
     name: 'StationPanel',
     data() {
         return {
-            powerOutPerBus: 60, // TODO: figure out number
+            powerOutPerBus: 1, // TODO: figure out number
         };
     },
     computed: {
@@ -54,7 +54,6 @@ export default {
             const chStation = this.planStations.find((station) => station.stop_id === this.stationID);
             // find the stop
             const stp = stopsList.find((stop) => stop.stopName === chStation.stop_name);
-            
             return { ...chStation, ...stp, converted: true };
 
             // // try to find a charging station @ stop
@@ -67,9 +66,16 @@ export default {
             // console.log(st);
             // return st;
         },
+        busLocations: function () {
+            return this.$store.state.busLocations;
+        },
         bussesAtStation: function () {
-            return ['1000', '1100', '2000'];
-            // TODO using state.busLocations, return ID's of all busses at same coords
+            // find all busses at same locations
+            // busLocations show up as proxy object (figure out why) so we have to check each coordinate seperatesly
+            const busses = this.busLocations.filter((bus) => (bus.coordinates[0] === this.selectedStation.coordinates[0]) 
+                                                            && (bus.coordinates[1] === this.selectedStation.coordinates[1]));
+            
+            return busses.map((b) => b.busID);
         }
     },
 
