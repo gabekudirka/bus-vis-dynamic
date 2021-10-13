@@ -59,16 +59,17 @@ def Extract_Bus_Data(raw_deployment_data, UTA_schedule_df, UTA_stops_df, env_imp
             for i in range(len(bus_runcut_data) + 1):
                 distance_traveled = m[bus_id][i]
                 remaining_charge = 100 - (100 * (distance_traveled / 62))
-                is_charging = X[bus_id][i]
 
                 if i == 0:
                     stop_name = bus_runcut_data['from_stop'].iloc[i]
                     arrival_time = ''
                     departure_time = bus_runcut_data['FromTime'].iloc[i]
                     direction = bus_runcut_data['DirectionName'].iloc[i]
+                    is_charging = 0
                 else:
                     #For some buses there are more stops in the deployment plans then are listed in the runcut so I just treat the last stop in the
                     #runcut as the last stop and ignore the last in the deployment plan. This only affects non converted buses so it shouldn't matter
+                    is_charging = X[bus_id][i-1]
                     stop_name = bus_runcut_data['to_stop'].iloc[i-1]
                     arrival_time = bus_runcut_data['ToTime'].iloc[i-1]
                     if i == len(bus_runcut_data):

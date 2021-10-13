@@ -20,5 +20,6 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'object-shorthand': 'off',
     'no-plusplus': 'off',
+    'arrow-parens': 'off'
   },
 };
