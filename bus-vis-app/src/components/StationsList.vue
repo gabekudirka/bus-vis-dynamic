@@ -69,7 +69,7 @@ export default {
     background: lightseagreen !important;
 }
 ul#stationsList > li:nth-of-type(odd) {
-    background-color: #f1f1f1;
+    background-color: white;
 }
 .listItem{
     padding: 0.6em;

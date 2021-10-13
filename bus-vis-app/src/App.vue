@@ -1,10 +1,10 @@
 <template>
   <div id="page">
-    <ListContainer class="left-sidebar"/>
+    <ListContainer class="left-sidebar sidebars"/>
     <div class="main-panel">
-      <div class="top-main bottom-border">
+      <div class="top-main">
         <MapPanel class="MAP" :planBusses="planBusses"> </MapPanel>
-        <PlanDetails class="left-border right-sidebar"/>
+        <PlanDetails class="right-sidebar"/>
       </div>
       <BusPanel v-if="showBusses" class="bottom-main"/>
       <StationPanel v-if="!showBusses" class="bottom-main"/>
@@ -50,6 +50,9 @@ export default {
 </script>
 
 <style>
+.sidebars {
+  background-color: #efefef;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -92,9 +95,6 @@ export default {
   max-height: 65vh;
 }
 
-.left-border{
-  border-left: 1px solid grey;
-}
 .bottom-border{
   border-bottom: 1px solid grey;
 }
