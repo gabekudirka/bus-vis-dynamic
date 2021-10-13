@@ -5,7 +5,6 @@
         <p>Located at: {{selectedStation.stopName}} </p>
         <p>Busses currently @ station: {{ bussesAtStation }}</p>
         <p>Current station power output: {{ bussesAtStation.length * powerOutPerBus}} </p>
-        <p>Busses visited station so far: 5/23 </p>
     </div>
 </template>
 
