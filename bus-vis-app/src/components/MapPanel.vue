@@ -1,7 +1,7 @@
 /* eslint-disable max-len no-continue */
 <template>
     <div>
-        <BusMap :busLocations="busLocations"/>
+        <BusMap/>
     </div>
 </template>
 
@@ -28,6 +28,23 @@ export default {
         },
         // returns array of {busID: ID, coordinates: [lat,long]}
         busLocations: function () { 
+            return this.$store.state.busLocations;
+        }
+    },
+    watch: {
+        // update bus locations in state when time is changed
+        time: function () {
+            const busLocs = this.calcBusLocations();
+            this.$store.dispatch('changeBusLocations', busLocs);
+        }
+    },
+    mounted: function () {
+        const busLocs = this.calcBusLocations();
+        this.$store.dispatch('changeBusLocations', busLocs);
+    },
+    methods: {
+        calcBusLocations() {
+            console.log('calculating!!');
             const busLocations = [];
             p20.buses.forEach((bus) => {
                 for (let i = 0; i < bus.stops.length; i++) {
@@ -62,9 +79,7 @@ export default {
                 }
             });
             return busLocations;
-        }
-    },
-    methods: {
+        },
         // calculate the current coordinates of a bus between stop1 and stop2
         calcBusCoords(stop1, stop2, line) {
             const stop2atime = (stop2.arrival_time === '') ? '00:00' : stop2.arrival_time;

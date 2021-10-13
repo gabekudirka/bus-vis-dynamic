@@ -7,7 +7,8 @@ export default createStore({
         selectedRoute: '2X',
         selectedChargingStation: '7',
         time: '4:00',
-        showBusses: true
+        showBusses: true,
+        busLocations: []
     },
     getters: {},
     mutations: {
@@ -31,6 +32,9 @@ export default createStore({
         CHANGE_SHOW_BUSSES(state, showBusses) {
             state.showBusses = showBusses;
         },
+        CHANGE_BUS_LOCATIONS(state, busLocations) {
+            state.busLocations = busLocations;
+        },
     },
     actions: {
         changePlan({ commit }, payload) {
@@ -50,6 +54,9 @@ export default createStore({
         },
         changeShowBusses({ commit }, payload) {
             commit('CHANGE_SHOW_BUSSES', payload);
+        },
+        changeBusLocations({ commit }, payload) {
+            commit('CHANGE_BUS_LOCATIONS', payload);
         },
 
     }

@@ -3,8 +3,8 @@
     <div class="left-align">
         <h4>Station: {{selectedStation.stopId}} </h4>
         <p>Located at: {{selectedStation.stopName}} </p>
-        <p>Busses currently @ station: bus2, bus5, bus8</p>
-        <p>Current station power output: 3000 powers </p>
+        <p>Busses currently @ station: {{ bussesAtStation }}</p>
+        <p>Current station power output: {{ bussesAtStation.length * powerOutPerBus}} </p>
         <p>Busses visited station so far: 5/23 </p>
     </div>
 </template>
@@ -18,6 +18,11 @@ import stopsList from '../data/allStops.json';
 
 export default {
     name: 'StationPanel',
+    data() {
+        return {
+            powerOutPerBus: 60, // TODO: figure out number
+        };
+    },
     computed: {
         plan: function () {
             return this.$store.state.plan;
@@ -61,6 +66,10 @@ export default {
             // console.log('here');
             // console.log(st);
             // return st;
+        },
+        bussesAtStation: function () {
+            return ['1000', '1100', '2000'];
+            // TODO using state.busLocations, return ID's of all busses at same coords
         }
     },
 
