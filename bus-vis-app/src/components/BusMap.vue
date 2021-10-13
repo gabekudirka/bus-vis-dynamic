@@ -67,6 +67,6 @@ export default {
 #mapContainer {
     /* Not sure how to handle the height here */
     width: 100%;
-    height: 70vh;
+    height: 60vh;
 }
 </style>

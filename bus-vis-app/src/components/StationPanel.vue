@@ -34,26 +34,33 @@ export default {
             }
             return p180.charging_stations;
         },
-        stations: function () {
-            const list = [];
-            this.planStations.forEach((station) => {
-                const st = stopsList.find((stop) => stop.stopName === station.stop_name);
-                // TODO: use filter?? Multiple stops with same name but diff ids...
-                list.push({ ...station, ...st, converted: true });
-            });
-            console.log(list);
-            return list;
-        },
+        // stations: function () {
+        //     const list = [];
+        //     this.planStations.forEach((station) => {
+        //         const st = stopsList.find((stop) => stop.stopName === station.stop_name);
+        //         // TODO: use filter?? Multiple stops with same name but diff ids...
+        //         list.push({ ...station, ...st, converted: true });
+        //     });
+        //     console.log(list);
+        //     return list;
+        // },
         selectedStation: function () {
-            // try to find a charging station @ stop
-            let st = this.stations.find((station) => station.stopId === this.stationID);
-            // otherwise just show stop info
-            if (!st) {
-                st = stopsList.find((stop) => stop.stopId === this.stationID);
-            }
-            console.log('here');
-            console.log(st);
-            return st;
+            // find the charging station object 
+            const chStation = this.planStations.find((station) => station.stop_id === this.stationID);
+            // find the stop
+            const stp = stopsList.find((stop) => stop.stopName === chStation.stop_name);
+            
+            return { ...chStation, ...stp, converted: true };
+
+            // // try to find a charging station @ stop
+            // let st = this.stations.find((station) => station.stopId === this.stationID);
+            // // otherwise just show stop info
+            // if (!st) {
+            //     st = stopsList.find((stop) => stop.stopId === this.stationID);
+            // }
+            // console.log('here');
+            // console.log(st);
+            // return st;
         }
     },
 

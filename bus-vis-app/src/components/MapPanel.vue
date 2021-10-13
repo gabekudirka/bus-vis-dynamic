@@ -1,7 +1,7 @@
 /* eslint-disable max-len no-continue */
 <template>
     <div>
-        <BusMap class="MAP" :busLocations="busLocations"/>
+        <BusMap :busLocations="busLocations"/>
     </div>
 </template>
 

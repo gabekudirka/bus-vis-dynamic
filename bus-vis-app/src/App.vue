@@ -1,13 +1,13 @@
 <template>
   <div id="page">
-    <RoutesList class="left-sidebar"/>
+    <ListContainer class="left-sidebar"/>
     <div class="main-panel">
       <div class="top-main bottom-border">
         <MapPanel class="MAP" :planBusses="planBusses"> </MapPanel>
         <PlanDetails class="left-border right-sidebar"/>
       </div>
-      <BusPanel v-if="showBus === true" class="bottom-main"/>
-      <StationPanel v-if="showBus === false" class="bottom-main"/>
+      <BusPanel v-if="showBusses" class="bottom-main"/>
+      <StationPanel v-if="!showBusses" class="bottom-main"/>
     </div>
   </div>
 </template>
@@ -17,7 +17,7 @@ import BusPanel from './components/BusPanel.vue';
 import StationPanel from './components/StationPanel.vue';
 import MapPanel from './components/MapPanel.vue';
 import PlanDetails from './components/PlanDetails.vue';
-import RoutesList from './components/RoutesList.vue';
+import ListContainer from './components/ListContainer.vue';
 import p20 from './data/plans/p20.json';
 import p60 from './data/plans/p60.json';
 import p180 from './data/plans/p180.json';
@@ -31,14 +31,12 @@ export default {
     StationPanel,
     MapPanel,
     PlanDetails,
-    RoutesList
-  },
-  data() {
-    return {
-      showBus: true,
-    };
+    ListContainer
   },
   computed: {
+    showBusses: function () {
+      return this.$store.state.showBusses;
+    },
     planBusses: function () {
         if (this.$store.state.plan === 'p20') {
             return p20;
@@ -58,7 +56,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 #page{
   display:flex;
@@ -66,7 +63,7 @@ export default {
   height: 90vh;
 }
 .left-sidebar{
-  max-width:450px;
+  max-width:30vw;
   flex:1;
   overflow-y:auto;
   height:100%;
@@ -80,19 +77,19 @@ export default {
 .top-main{
   flex:4;
   display: flex;
-  height:100%;
+  max-height:60vh;
 }
 .bottom-main{
   flex:1;
 }
 .right-sidebar{
-  max-width:450px;
+  max-width:30vw;
   flex:1;
   overflow-y:auto;
-  height:100%;
 }
 .MAP{
   flex:3;
+  max-height: 65vh;
 }
 
 .left-border{
