@@ -1,13 +1,13 @@
 <template>
   <div id="page">
-    <ListContainer class="left-sidebar sidebars" :planBusses="planBusObj" :planObj="planObj"/>
+    <ListContainer class="left-sidebar sidebars" :key="plan" :planBusses="planBusObj" :planObj="planObj"/>
     <div class="main-panel">
       <div class="top-main">
         <MapPanel class="MAP" :planObj="planBusObj"> </MapPanel>
         <PlanDetails class="right-sidebar"/>
       </div>
-      <BusPanel v-if="showBusses" :planObj="planBusObj" class="bottom-main"/>
-      <StationPanel v-if="!showBusses" :planObj="planObj" class="bottom-main"/>
+      <BusPanel v-if="showBusses" :key="plan" :planObj="planBusObj" class="bottom-main"/>
+      <StationPanel v-if="!showBusses" :key="plan" :planObj="planObj" class="bottom-main"/>
     </div>
   </div>
 </template>
