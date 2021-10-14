@@ -24,6 +24,7 @@ module.exports = {
     'no-unused-vars': 'off',
     'no-continue': 'off',
     'prefer-template' : 'off',
-    'arrow-parens': 'off'
+    'arrow-parens': 'off',
+    'no-confusing-arrow' : 'off'
     },
 };

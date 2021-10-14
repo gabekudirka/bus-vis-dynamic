@@ -19,11 +19,9 @@ export default createStore({
             state.selectedBus = busId;
         },
         CHANGE_SELECTED_ROUTE(state, routeId) {
-            console.log(routeId);
             state.selectedRoute = routeId;
         },
         CHANGE_SELECTED_CHARGING_STATION(state, stationId) {
-            console.log('settinggg', stationId);
             state.selectedChargingStation = stationId;
         },
         CHANGE_TIME(state, time) {
@@ -56,7 +54,6 @@ export default createStore({
             commit('CHANGE_SHOW_BUSSES', payload);
         },
         changeBusLocations({ commit }, payload) {
-            console.log('changebuslocs', payload[0]);
             commit('CHANGE_BUS_LOCATIONS', payload);
         },
 

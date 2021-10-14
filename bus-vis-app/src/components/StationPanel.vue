@@ -31,34 +31,27 @@
 </template>
 
 <script>
-import p20 from '../data/plans/p20.json';
-import p60 from '../data/plans/p60.json';
-import p180 from '../data/plans/p180.json';
-
 import stopsList from '../data/allStops.json';
 
 export default {
     name: 'StationPanel',
+    props: {
+        planObj: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
             powerOutPerBus: 1, // TODO: figure out number
         };
     },
     computed: {
-        plan: function () {
-            return this.$store.state.plan;
-        },
         stationID: function () {
             return this.$store.state.selectedChargingStation;
         },
         planStations: function () {
-            if (this.plan === 'p20') {
-                console.log(p20.charging_stations);
-                return p20.charging_stations;
-            } if (this.plan === 'p60') {
-                return p60.charging_stations;
-            }
-            return p180.charging_stations;
+            return this.planObj.charging_stations;
         },
         // stations: function () {
         //     const list = [];

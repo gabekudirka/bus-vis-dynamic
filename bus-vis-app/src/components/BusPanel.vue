@@ -4,7 +4,8 @@
     <div class="row">
       <div class="col-5 left-align">
           <h4>
-            <i class="fas fa-bus"></i>
+            <i v-if="bus.converted" class="fas fa-plug" style="padding:.1em"></i>
+            <i class="fas fa-bus" style="padding:.1em"></i>
             Bus {{ bus.id }} 
           </h4>
           <p> Bus Line: {{ bus.line }} </p>
@@ -26,17 +27,17 @@
 
 <script>
 import * as d3 from 'd3';
-import p20 from '../data/buses/p20.json';
-import p60 from '../data/buses/p60.json';
-import p180 from '../data/buses/p180.json';
 
 export default {
     name: 'BusPanel',
+    props: {
+        planObj: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
-            p20,
-            p60,
-            p180,
             width: 750,
             height: 400,
             margin: {
@@ -51,29 +52,8 @@ export default {
         busId: function () {
             return this.$store.state.selectedBus;
         },
-        plan: function () {
-            return this.$store.state.plan;
-        },
         bus: function () {
-            switch (this.plan) {
-                case 'p20':
-                    return this.p20Dict[this.busId];
-                case 'p60':
-                    return this.p60Dict[this.busId];
-                case 'p180':
-                    return this.p180Dict[this.busId];
-                default:
-                    return this.p20Dict[this.busId];
-            }
-        },
-        p20Dict: function () {
-            return this.jsonToDict(p20);
-        },
-        p60Dict: function () {
-            return this.jsonToDict(p60);
-        },
-        p180Dict: function () {
-            return this.jsonToDict(p180);
+            return this.planObj.buses.find((bus) => bus.id === this.busId);
         },
         chargeChartData: function () {
             const chargeData = [];
