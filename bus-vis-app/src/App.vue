@@ -68,6 +68,7 @@ export default {
 }
 .left-sidebar{
   max-width:30vw;
+  min-width: 20vw;
   flex:1;
   overflow-y:auto;
   height:100%;
