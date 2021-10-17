@@ -29,7 +29,12 @@ export default {
     },
     data() {
         return {
-            margin: { top: 15, right: 35, bottom: 40, left: 25 },
+            margin: { 
+                top: 15, 
+                right: 35, 
+                bottom: 40, 
+                left: 25 
+            },
             innerClass: `${this.chartName}-data`,
         };
     },
@@ -55,8 +60,6 @@ export default {
             const timeParser = d3.timeParse('%H:%M');
             const xAccessor = (pt) => timeParser(pt.x);
             const yAccessor = (pt) => pt.y;
-
-            console.log(timeParser(this.data[3].x));
 
             const xScale = d3.scaleTime().range([0, this.width]);
             const yScale = d3.scaleLinear().range([this.height, 0]);
@@ -88,10 +91,8 @@ export default {
                         const domainMax = d3.max(this.data, yAccessor);
                         yScale.domain([0, (domainMax + (20 - (domainMax % 20)))]);
                     }
-                    
                     break;
                 default:
-
                     break;
             }
 

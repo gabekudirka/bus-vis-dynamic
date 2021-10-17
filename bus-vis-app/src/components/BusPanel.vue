@@ -2,7 +2,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-5 left-align">
+      <div class="col left-align">
           <h4>
             <i v-if="bus.converted" class="fas fa-plug" style="padding:.1em"></i>
             <i class="fas fa-bus" style="padding:.1em"></i>
@@ -43,14 +43,17 @@
 
 <script>
 import PanelChart from './PanelChart.vue';
-import p20 from '../data/buses/p20.json';
-import p60 from '../data/buses/p60.json';
-import p180 from '../data/buses/p180.json';
 
 export default {
     name: 'BusPanel',
     components: {
         PanelChart,
+    },
+    props: {
+        planObj: {
+            type: Object,
+            required: true
+        }
     },
     data() {
         return {
