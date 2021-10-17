@@ -23,7 +23,7 @@ export default createStore({
             state.selectedRoute = routeId;
         },
         CHANGE_SELECTED_CHARGING_STATION(state, stationId) {
-            console.log('settinggg', stationId);
+            console.log('setting', stationId);
             state.selectedChargingStation = stationId;
         },
         CHANGE_TIME(state, time) {

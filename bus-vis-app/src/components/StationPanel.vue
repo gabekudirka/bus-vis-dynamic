@@ -1,15 +1,26 @@
 /* eslint-disable max-len */
 <template>
-    <div class="left-align">
-        <h4>Station: {{selectedStation.stopId}} </h4>
-        <p>Located at: {{selectedStation.stopName}} </p>
-        <p>Busses currently @ station: {{ bussesAtStation }}</p>
-        <p>Current station power output: {{ bussesAtStation.length * powerOutPerBus}} </p>
-        <p>Busses visited station so far: 5/23 </p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col left-align">
+                <h4>Station: {{selectedStation.stopId}} </h4>
+                <p>Located at: {{selectedStation.stopName}} </p>
+                <p>Busses currently @ station: {{ bussesAtStation }}</p>
+                <p>Current station power output: {{ bussesAtStation.length * powerOutPerBus}} </p>
+                <p>Busses visited station so far: 5/23 </p>
+            </div>
+            <div class="col">
+                <p class="chart-title"> <b> Power Output Over Time </b> </p>
+                <div id="charge-chart-container">
+                    <TimeSlider />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import TimeSlider from './TimeSlider.vue';
 import p20 from '../data/plans/p20.json';
 import p60 from '../data/plans/p60.json';
 import p180 from '../data/plans/p180.json';
@@ -18,6 +29,9 @@ import stopsList from '../data/allStops.json';
 
 export default {
     name: 'StationPanel',
+    components: {
+        TimeSlider,
+    },
     data() {
         return {
             powerOutPerBus: 1, // TODO: figure out number
