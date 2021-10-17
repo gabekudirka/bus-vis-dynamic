@@ -2,23 +2,36 @@
   <div>
     <ToggleSwitch :initShowBusses="showBusses" @toggleView="toggleView"/> 
     <div class="lists">
-        <RoutesList v-if="showBusses"/>
-        <StationsList v-if="!showBusses"/>
+        <!-- <RoutesList v-if="showBusses"/> -->
+        <BussesList v-if="showBusses" :planObj="planBusses"/>
+        <StationsList v-if="!showBusses" :planObj="planObj"/>
     </div>
   </div>
 </template>
 
 <script>
 import ToggleSwitch from './ToggleSwitch.vue';
-import RoutesList from './RoutesList.vue';
+// import RoutesList from './RoutesList.vue';
 import StationsList from './StationsList.vue';
+import BussesList from './BussesList.vue';
 
 export default {
     name: 'ListContainer',
     components: {
         ToggleSwitch,
-        RoutesList,
-        StationsList
+        // RoutesList,
+        StationsList,
+        BussesList
+    },
+    props: {
+        planObj: {
+            type: Object,
+            required: true,
+        },
+        planBusses: {
+            type: Object,
+            required: true
+        }
     },
     computed: {
         showBusses: function () {
@@ -26,14 +39,7 @@ export default {
         }
     },
     methods: {
-        updateMap(val) {
-            console.log('update map', val);
-        },
-        selectedMethod(val) {
-            console.log('selected method', val);
-        },
         toggleView(showBussesVal) {
-            console.log('toggle view', showBussesVal);
             this.$store.dispatch('changeShowBusses', showBussesVal);
         }
     },

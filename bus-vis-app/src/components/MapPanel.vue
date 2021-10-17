@@ -7,7 +7,6 @@
 
 <script>
 
-import p20 from '../data/buses/p20.json';
 import stopsList from '../data/allStops.json';
 import routesList from '../data/allRoutes.json';
 import BusMap from './BusMap.vue';
@@ -18,7 +17,7 @@ export default {
         BusMap,
     },
     props: {
-        planBusses: {
+        planObj: {
             type: Object
         },
     },
@@ -44,9 +43,8 @@ export default {
     },
     methods: {
         calcBusLocations() {
-            console.log('calculating!!');
             const busLocations = [];
-            p20.buses.forEach((bus) => {
+            this.planObj.buses.forEach((bus) => {
                 for (let i = 0; i < bus.stops.length; i++) {
                     const stp = bus.stops[i];
                     // if arv <= t <= dpt   -> at stop

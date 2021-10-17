@@ -40,8 +40,7 @@ export default {
 
 <style>
 .toggle-switch{
-    margin:25px;
-    margin-bottom: 10px;
+    margin:1em;
 }
 .toggle {
     padding: 2px 6px ;

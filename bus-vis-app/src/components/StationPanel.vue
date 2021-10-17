@@ -1,30 +1,37 @@
 /* eslint-disable max-len */
 <template>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col left-align">
-                <h4>Station: {{selectedStation.stopId}} </h4>
-                <p>Located at: {{selectedStation.stopName}} </p>
-                <p>Busses currently @ station: {{ bussesAtStation }}</p>
-                <p>Current station power output: {{ bussesAtStation.length * powerOutPerBus}} </p>
-                <p>Busses visited station so far: 5/23 </p>
-            </div>
-            <div class="col">
-                <p class="chart-title"> <b> Power Output Over Time </b> </p>
-                <div id="charge-chart-container">
-                    <TimeSlider />
-                </div>
-            </div>
+    <div class="left-align">
+        <h4>
+            <i class="fas fa-charging-station"></i>
+             {{selectedStation.stopName}} 
+        </h4>
+        <div class="sidebyside">
+            <table id="stationInfo" class="flex1">
+                <tr>
+                    <td> UTA Stop ID </td>
+                    <td> {{selectedStation.stopId}} </td>
+                </tr>
+                <tr> 
+                    <td>Busses @ Station </td>
+                    <td class="sidebyside">
+                        <div v-for="bus in bussesAtStation" :key="bus" class="busnum">
+                            {{bus}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Current Power Output </td>
+                    <td> {{ bussesAtStation.length * powerOutPerBus}} </td>
+                </tr>
+            </table>
+            <div class="flex1"> <TimeSlider /> </div>
+            <div class="flex1"> PUT CHART2 HERE </div>
         </div>
     </div>
 </template>
 
 <script>
 import TimeSlider from './TimeSlider.vue';
-import p20 from '../data/plans/p20.json';
-import p60 from '../data/plans/p60.json';
-import p180 from '../data/plans/p180.json';
-
 import stopsList from '../data/allStops.json';
 
 export default {
@@ -32,26 +39,23 @@ export default {
     components: {
         TimeSlider,
     },
+    props: {
+        planObj: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
             powerOutPerBus: 1, // TODO: figure out number
         };
     },
     computed: {
-        plan: function () {
-            return this.$store.state.plan;
-        },
         stationID: function () {
             return this.$store.state.selectedChargingStation;
         },
         planStations: function () {
-            if (this.plan === 'p20') {
-                console.log(p20.charging_stations);
-                return p20.charging_stations;
-            } if (this.plan === 'p60') {
-                return p60.charging_stations;
-            }
-            return p180.charging_stations;
+            return this.planObj.charging_stations;
         },
         // stations: function () {
         //     const list = [];
@@ -88,7 +92,6 @@ export default {
             // busLocations show up as proxy object (figure out why) so we have to check each coordinate seperatesly
             const busses = this.busLocations.filter((bus) => (bus.coordinates[0] === this.selectedStation.coordinates[0]) 
                                                             && (bus.coordinates[1] === this.selectedStation.coordinates[1]));
-            
             return busses.map((b) => b.busID);
         }
     },
@@ -100,9 +103,34 @@ export default {
 <style>
 .left-align{
     text-align: left;
-    padding:1em;
+    padding:.6em;
 }
 p{
-    margin-bottom:0.5em !important;
+    margin: 0.2em !important;
 }
+.sidebyside {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.flex1 {
+    flex: 1;
+    padding: .2em;
+}
+.busnum {
+    padding:0 .1em;
+}
+#stationInfo{
+    border: 1px solid #efefef;
+}
+#stationInfo > tr > td:first-child{ 
+    font-weight: bold;
+    background-color: #efefef;
+    border-bottom: 1px solid white;
+}
+td {
+    padding: 0.2em;
+    border-bottom: 1px solid #efefef;
+}
+
 </style>

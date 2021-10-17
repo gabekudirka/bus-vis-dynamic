@@ -1,13 +1,13 @@
 <template>
   <div id="page">
-    <ListContainer class="left-sidebar sidebars"/>
+    <ListContainer class="left-sidebar sidebars" :key="plan" :planBusses="planBusObj" :planObj="planObj"/>
     <div class="main-panel">
       <div class="top-main">
-        <MapPanel class="MAP" :planBusses="planBusses"> </MapPanel>
+        <MapPanel class="MAP" :planObj="planBusObj"> </MapPanel>
         <PlanDetails class="right-sidebar"/>
       </div>
-      <BusPanel v-if="showBusses" class="bottom-main"/>
-      <StationPanel v-if="!showBusses" class="bottom-main"/>
+      <BusPanel v-if="showBusses" :key="plan" :planObj="planBusObj" class="bottom-main"/>
+      <StationPanel v-if="!showBusses" :key="plan" :planObj="planObj" class="bottom-main"/>
     </div>
   </div>
 </template>
@@ -18,9 +18,12 @@ import StationPanel from './components/StationPanel.vue';
 import MapPanel from './components/MapPanel.vue';
 import PlanDetails from './components/PlanDetails.vue';
 import ListContainer from './components/ListContainer.vue';
-import p20 from './data/plans/p20.json';
-import p60 from './data/plans/p60.json';
-import p180 from './data/plans/p180.json';
+import p20p from './data/plans/p20.json';
+import p60p from './data/plans/p60.json';
+import p180p from './data/plans/p180.json';
+import p20b from './data/buses/p20.json';
+import p60b from './data/buses/p60.json';
+import p180b from './data/buses/p180.json';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -34,18 +37,38 @@ export default {
     ListContainer
   },
   computed: {
+    plan: function () {
+      return this.$store.state.plan;
+    },
     showBusses: function () {
       return this.$store.state.showBusses;
     },
-    planBusses: function () {
-        if (this.$store.state.plan === 'p20') {
-            return p20;
-        } if (this.$store.state.plan === 'p60') {
-            return p60;
+    planBusObj: function () {
+        if (this.plan === 'p20') {
+            return p20b;
+        } if (this.plan === 'p60') {
+            return p60b;
         }
-        return p180;
+        return p180b;
     },
-  }
+    planObj: function () {
+      if (this.plan === 'p20') {
+            return p20p;
+        } if (this.plan === 'p60') {
+            return p60p;
+        }
+        return p180p;
+    }
+  },
+  // watch: {
+  //       plan: function () {
+  //         // TODO set charging station to planObj.cs[0] and bus to planBusObj.buses[0]
+  //         console.log(this.planObj.chargingStations[0]);
+  //         this.$store.dispatch('changeStation', this.planObj.chargingStations[0].stop_id);
+  //         console.log(this.planBusObj.buses[0]);
+  //         this.$store.dispatch('changeBus', this.planBusObj.buses[0].id);
+  //       }
+  //   },
 };
 </script>
 
@@ -59,6 +82,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  font-size: 11pt;
 }
 #page{
   display:flex;
@@ -66,7 +90,8 @@ export default {
   height: 100vh;
 }
 .left-sidebar{
-  max-width:20vw;
+  max-width:30vw;
+  min-width: 20vw;
   flex:1;
   overflow-y:auto;
   height:100%;
