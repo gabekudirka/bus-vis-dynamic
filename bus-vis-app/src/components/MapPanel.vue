@@ -1,12 +1,13 @@
 /* eslint-disable max-len no-continue */
 <template>
     <div>
-        <BusMap/>
+        <div class="map">
+            <BusMap /> 
+        </div>
     </div>
 </template>
 
 <script>
-
 import stopsList from '../data/allStops.json';
 import routesList from '../data/allRoutes.json';
 import BusMap from './BusMap.vue';
@@ -14,7 +15,7 @@ import BusMap from './BusMap.vue';
 export default {
     name: 'MapPanel',
     components: {
-        BusMap,
+        BusMap
     },
     props: {
         planObj: {
@@ -129,5 +130,4 @@ export default {
     text-align: left;
     padding:1em;
 }
-
 </style>

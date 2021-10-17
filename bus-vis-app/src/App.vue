@@ -105,19 +105,20 @@ export default {
 .top-main{
   flex:4;
   display: flex;
-  max-height:60vh;
+  max-height: 75vh;
 }
 .bottom-main{
   flex:1;
+  max-height: 25vh;
+  background-color: #ededed;
 }
 .right-sidebar{
-  max-width:30vw;
+  max-width:20vw;
   flex:1;
   overflow-y:auto;
 }
 .MAP{
   flex:3;
-  max-height: 65vh;
 }
 
 .bottom-border{

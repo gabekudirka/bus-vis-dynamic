@@ -24,17 +24,21 @@
                     <td> {{ bussesAtStation.length * powerOutPerBus}} </td>
                 </tr>
             </table>
-            <div class="flex1"> PUT CHART1 HERE </div>
+            <div class="flex1"> <TimeSlider /> </div>
             <div class="flex1"> PUT CHART2 HERE </div>
         </div>
     </div>
 </template>
 
 <script>
+import TimeSlider from './TimeSlider.vue';
 import stopsList from '../data/allStops.json';
 
 export default {
     name: 'StationPanel',
+    components: {
+        TimeSlider,
+    },
     props: {
         planObj: {
             type: Object,
