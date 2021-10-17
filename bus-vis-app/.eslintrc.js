@@ -25,6 +25,7 @@ module.exports = {
     'no-continue': 'off',
     'prefer-template' : 'off',
     'arrow-parens': 'off',
-    'no-confusing-arrow' : 'off'
+    'no-confusing-arrow' : 'off',
+    'prefer-destructuring': 'off',
     },
 };

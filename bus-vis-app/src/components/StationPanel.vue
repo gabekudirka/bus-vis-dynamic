@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len prefer-destructuring */
 <template>
     <div class="left-align">
         <h4>
@@ -69,7 +69,11 @@ export default {
         // },
         selectedStation: function () {
             // find the charging station object 
-            const chStation = this.planStations.find((station) => station.stop_id === this.stationID);
+            let chStation = this.planStations.find((station) => station.stop_id === this.stationID);
+            // if we can't find the station, return the first one of the plan
+            if (!chStation) {
+                chStation = this.planStations[0];
+            }
             // find the stop
             const stp = stopsList.find((stop) => stop.stopName === chStation.stop_name);
             return { ...chStation, ...stp, converted: true };
