@@ -6,7 +6,7 @@
         <MapPanel class="MAP" :planObj="planBusObj"> </MapPanel>
         <PlanDetails class="right-sidebar"/>
       </div>
-      <BusPanel v-if="showBusses" :key="plan" :planObj="planBusObj" class="bottom-main"/>
+      <BusPanel v-if="showBusses" :key="plan" :planObj="planObj" :planBusObj="planBusObj" class="bottom-main"/>
       <StationPanel v-if="!showBusses" :key="plan" :planObj="planObj" class="bottom-main"/>
     </div>
   </div>

@@ -10,7 +10,7 @@
           </h4>
           <p> Bus Line: {{ bus.line }} </p>
           <p> Converted: {{ bus.converted }} </p>
-          <p> Bus Status: On Route </p>
+          <p> Bus Status: {{ busStatus }} </p>
           <p> Last Stop: {{ bus.stops[0].stop_name }} </p>
           <p> Bus Environmental Impact: {{ bus.environmental_equity }} </p>
       </div>
@@ -50,6 +50,10 @@ export default {
         PanelChart,
     },
     props: {
+        planBusObj: {
+            type: Object,
+            required: true
+        },
         planObj: {
             type: Object,
             required: true
@@ -68,7 +72,7 @@ export default {
             return this.$store.state.selectedBus;
         },
         bus: function () {
-            return this.planObj.buses.find((bus) => bus.id === this.busId);
+            return this.planBusObj.buses.find((bus) => bus.id === this.busId);
         },
         chargeChartData: function () {
             const chargeData = [];
@@ -82,6 +86,18 @@ export default {
             }
             chargeData.push({ x: '23:00', y: Math.max(0, parseInt(this.bus.stops[this.bus.stops.length - 1].remaining_charge, 10)) });
             return chargeData;
+        },
+        busStatus: function () {
+            const location = this.$store.state.busLocations.find((bus) => bus.busID === this.busId);
+            const chStation = this.planObj.charging_stations.find((station) => station.coordinates === location);
+            if (chStation) {
+                return 'At Charging Station';
+            }
+            // const stp = stopsList.find((stop) => stop.coordinates === location);
+            // if (stp) {
+            //     return 'At Stop';
+            // }
+            return 'On Route';
         },
         milesChartData: function () {
             const milesData = [];
