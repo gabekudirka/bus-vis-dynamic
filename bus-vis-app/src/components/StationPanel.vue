@@ -23,7 +23,7 @@
                     <td> Current Power Output </td>
                     <td> {{ bussesAtStation.length * powerOutPerBus}} </td>
                 </tr>
-            </table>
+            </table>    
             <div class="flex1"> <TimeSlider /> </div>
             <div class="flex1"> PUT CHART2 HERE </div>
         </div>
@@ -90,12 +90,11 @@ export default {
         bussesAtStation: function () {
             // find all busses at same locations
             // busLocations show up as proxy object (figure out why) so we have to check each coordinate seperatesly
-            const busses = this.busLocations.filter((bus) => (bus.coordinates[0] === this.selectedStation.coordinates[0]) 
-                                                            && (bus.coordinates[1] === this.selectedStation.coordinates[1]));
+            const busses = this.busLocations.features.filter((bus) => (bus.geometry.coordinates[0] === this.selectedStation.coordinates[0]) 
+                                                            && (bus.geometry.coordinates[1] === this.selectedStation.coordinates[1]));
             return busses.map((b) => b.busID);
         }
     },
-
 };
 
 </script>

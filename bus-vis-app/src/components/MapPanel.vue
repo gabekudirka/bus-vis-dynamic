@@ -43,8 +43,22 @@ export default {
         this.$store.dispatch('changeBusLocations', busLocs);
     },
     methods: {
+        geoJsonObj(busId, busCoordinates) {
+            return { 
+                type: 'Feature',
+                properties: { 
+                    id: busId
+                },
+                geometry: {
+                    type: 'Point',
+                    coordinates: busCoordinates
+                }
+            };
+        },
         calcBusLocations() {
-            const busLocations = [];
+            const busLocations = {};
+            busLocations.type = 'FeatureCollection';
+            busLocations.features = [];
             this.planObj.buses.forEach((bus) => {
                 for (let i = 0; i < bus.stops.length; i++) {
                     const stp = bus.stops[i];
@@ -55,7 +69,7 @@ export default {
                         const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
                         // TODO: add atStation if at charging station?
                         if (stationObj) {
-                            busLocations.push({ busID: bus.id, coordinates: stationObj.coordinates });
+                            busLocations.features.push(this.geoJsonObj(bus.id, stationObj.coordinates));
                             break;
                         }
                     // if dpt <= t <= next.arv   -> between stops
@@ -63,14 +77,14 @@ export default {
                         // calc coords
                         const coords = this.calcBusCoords(stp, bus.stops[i + 1], bus.line);
                         if (coords !== '') {
-                            busLocations.push({ busID: bus.id, coordinates: coords });
+                            busLocations.features.push(this.geoJsonObj(bus.id, coords));
                             break;
                         }  
                     // t <= arv   -> usually means bus has not left the station for the day        
                     } else if (this.timeIsGreaterEqTo(arvtime, this.time)) {
                         const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
                         if (stationObj) {
-                            busLocations.push({ busID: bus.id, coordinates: stationObj.coordinates });
+                            busLocations.features.push(this.geoJsonObj(bus.id, stationObj.coordinates));
                             break;
                         }
                         break;
