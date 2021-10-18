@@ -8,7 +8,10 @@ export default createStore({
         selectedChargingStation: '7',
         time: '12:20',
         showBusses: true,
-        busLocations: {}
+        busLocations: {
+            type: 'FeatureCollection',
+            features: []
+        },
     },
     getters: {},
     mutations: {

@@ -87,18 +87,6 @@ export default {
             chargeData.push({ x: '23:00', y: Math.max(0, parseInt(this.bus.stops[this.bus.stops.length - 1].remaining_charge, 10)) });
             return chargeData;
         },
-        busStatus: function () {
-            const location = this.$store.state.busLocations.find((bus) => bus.busID === this.busId);
-            const chStation = this.planObj.charging_stations.find((station) => station.coordinates === location);
-            if (chStation) {
-                return 'At Charging Station';
-            }
-            // const stp = stopsList.find((stop) => stop.coordinates === location);
-            // if (stp) {
-            //     return 'At Stop';
-            // }
-            return 'On Route';
-        },
         milesChartData: function () {
             const milesData = [];
             let totalMiles = 0;
@@ -115,6 +103,18 @@ export default {
             }
             milesData.push({ x: '23:00', y: totalMiles });
             return milesData;
+        },
+        busStatus: function () {
+            const location = this.$store.state.busLocations.features.find((bus) => bus.properties.id === this.properties.id);
+            const chStation = this.planObj.charging_stations.find((station) => station.coordinates === location);
+            if (chStation) {
+                return 'At Charging Station';
+            }
+            // const stp = stopsList.find((stop) => stop.coordinates === location);
+            // if (stp) {
+            //     return 'At Stop';
+            // }
+            return 'On Route';
         },
     },
     methods: {
