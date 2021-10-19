@@ -105,7 +105,7 @@ export default {
             return milesData;
         },
         busStatus: function () {
-            const location = this.$store.state.busLocations.features.find((bus) => bus.properties.id === this.properties.id);
+            const location = this.$store.state.busLocations.features.find((bus) => bus.properties.id === this.busId);
             const chStation = this.planObj.charging_stations.find((station) => station.coordinates === location);
             if (chStation) {
                 return 'At Charging Station';
