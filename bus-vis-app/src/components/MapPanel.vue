@@ -50,12 +50,13 @@ export default {
         this.$store.dispatch('changeBusLocations', busLocs);
     },
     methods: {
-        geoJsonObj(busId, busCoordinates, converted) {
+        geoJsonObj(busId, busCoordinates, converted, line) {
             return { 
                 type: 'Feature',
                 properties: { 
                     id: busId,
-                    converted: converted
+                    converted: converted,
+                    route: line,
                 },
                 geometry: {
                     type: 'Point',
@@ -86,7 +87,7 @@ export default {
                         
                         // TODO: add atStation if at charging station?
                         if (stationObj) {
-                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted));
+                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line));
                             break;
                         }
                     // if dpt <= t <= next.arv   -> between stops.
@@ -95,7 +96,7 @@ export default {
                         const coords = this.calcBusCoords(stp, bus.stops[i + 1], bus.line);
                         // console.log('Here2', coords, stp);
                         if (coords !== '') {
-                            busLocs.features.push(this.geoJsonObj(bus.id, coords, bus.converted));
+                            busLocs.features.push(this.geoJsonObj(bus.id, coords, bus.converted, bus.line));
                             break;
                         }  
                     // t <= arv   -> usually means bus has not left the station for the day        
@@ -103,7 +104,7 @@ export default {
                         // console.log('Here3', stp);
                         const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
                         if (stationObj) {
-                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted));
+                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line));
                             break;
                         }
                         break;

@@ -61,7 +61,9 @@ export default {
     drawBuses() {
       const ref = this;      
       function onEachFeature(feature, layer) {
-        layer.bindTooltip(feature.properties.id);
+        layer.bindTooltip(`<p><b>Bus ID:</b> ${feature.properties.id}</p>
+                           <p><b>Bus Route:</b> ${feature.properties.route}</p>
+                           <p>${feature.properties.converted ? 'Converted' : 'Not converted'}</p>`);
         layer.on({
             click: function () {
               ref.selectedIcon = layer;
