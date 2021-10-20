@@ -25,7 +25,10 @@ export default {
   },
   computed: {
     busLocations: function () {
-      return this.$store.state.busLocations;
+      return this.$store.state.busLocations;  
+    },
+    showBusPanel: function () {
+      return this.$store.state.showBusses;
     },
     blackIcon: function () {
       return L.icon({
@@ -63,6 +66,9 @@ export default {
             click: function () {
               ref.selectedIcon = layer;
               ref.$store.dispatch('changeBus', feature.properties.id);
+              if (!ref.showBusPanel) {
+                ref.$store.dispatch('changeShowBusses', true);
+              }
             }
         });
       }

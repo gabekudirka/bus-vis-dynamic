@@ -28,11 +28,23 @@ export default {
             showBusses: this.initShowBusses,
         };
     },
+    computed: {
+        showBussesState: function () {
+            return this.$store.state.showBusses;
+        }
+    },
+    watch: {
+        showBussesState: function () {
+            this.changeToggle();
+        }
+    },
     methods: {
        toggle() {
-            this.showBusses = !this.showBusses;
-            this.$emit('toggleView', this.showBusses);
+            this.$store.dispatch('changeShowBusses', !this.showBusses);
         },
+        changeToggle() {
+            this.showBusses = !this.showBusses;
+        }
     },
 };
 

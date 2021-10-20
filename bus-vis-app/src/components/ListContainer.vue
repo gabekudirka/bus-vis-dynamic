@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ToggleSwitch :initShowBusses="showBusses" @toggleView="toggleView"/> 
+    <ToggleSwitch :initShowBusses="showBusses" /> 
     <div class="lists">
         <!-- <RoutesList v-if="showBusses"/> -->
         <BussesList v-if="showBusses" :planObj="planBusses"/>
@@ -40,7 +40,7 @@ export default {
     },
     methods: {
         toggleView(showBussesVal) {
-            this.$store.dispatch('changeShowBusses', showBussesVal);
+            // this.$store.dispatch('changeShowBusses', showBussesVal);
         }
     },
 };
