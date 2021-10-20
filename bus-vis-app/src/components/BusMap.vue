@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <div>
     <div id="mapContainer" ref="mapElement"></div>
@@ -9,6 +10,8 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import L from 'leaflet';
 import busRoutes from '../data/BusRoutes_UTA.json';
+import redBusIcon from '../assets/images/busIconRed.png';
+import busIcon from '../assets/images/busIcon.png';
 // import busStops from '../data/BusStops_UTA.json';
 
 export default {
@@ -17,8 +20,6 @@ export default {
     return {
       center: [40.7608, -111.891],
       map: null,
-      svg: null,
-      pointContainer: null
     };
   },
   computed: {
@@ -33,19 +34,33 @@ export default {
   },
   methods: {
     drawBuses() {
-      console.log(this.busLocations.features[0].geometry.coordinates);
-      const geojsonMarkerOptions = {
-        radius: 6,
-        fillColor: '#ff7800',
-        color: '#000',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-      };
+      const ref = this;
+      const myIcon1 = L.icon({
+        iconUrl: busIcon,
+        iconSize: [20, 20],
+      });
+      const myIcon2 = L.icon({
+        iconUrl: redBusIcon,
+        iconSize: [20, 20],
+      });
+      
+      function onEachFeature(feature, layer) {
+        layer.bindTooltip(feature.properties.id);
+        layer.on({
+            click: function () {
+              console.log('wut');
+              ref.selectedIcon = layer;
+              layer.setIcon(myIcon2);
+              ref.$store.dispatch('changeBus', feature.properties.id);
+            }
+        });
+      }
+
       L.geoJson(this.busLocations, { 
           pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, geojsonMarkerOptions);
-          }
+            return L.marker(latlng, { icon: myIcon1 });
+          },
+          onEachFeature: onEachFeature
        }).addTo(this.map);
     },
     drawMap() {

@@ -27,5 +27,6 @@ module.exports = {
     'arrow-parens': 'off',
     'no-confusing-arrow' : 'off',
     'prefer-destructuring': 'off',
+    'global-require': 'off'
     },
 };
