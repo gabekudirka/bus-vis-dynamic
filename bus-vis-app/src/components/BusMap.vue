@@ -97,6 +97,11 @@ export default {
           layer.setLatLng([coords[1], coords[0]]);
           i++;
         }
+        if (this.busLocations.features[i].properties.converted) {
+          layer.setIcon(this.greenIcon);
+        } else {
+          layer.setIcon(this.blackIcon);
+        }
       });
     },
   },

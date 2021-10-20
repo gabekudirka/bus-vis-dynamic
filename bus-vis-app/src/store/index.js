@@ -2,7 +2,7 @@ import { createStore } from 'vuex';
 
 export default createStore({
     state: {
-        plan: 'p60',
+        plan: 'p20',
         selectedBus: '1025',
         selectedRoute: '2X',
         selectedChargingStation: '7',
@@ -13,7 +13,8 @@ export default createStore({
             features: [{
                 type: 'Feature',
                 properties: { 
-                    id: -1
+                    id: -1,
+                    converted: 0
                 },
                 geometry: {
                     type: 'Point',
