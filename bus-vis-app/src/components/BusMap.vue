@@ -10,7 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import L from 'leaflet';
 import busRoutes from '../data/BusRoutes_UTA.json';
-import redBusIcon from '../assets/images/busIconRed.png';
+import greenBusIcon from '../assets/images/busIconGreen.png';
 import busIcon from '../assets/images/busIcon.png';
 // import busStops from '../data/BusStops_UTA.json';
 
@@ -20,48 +20,64 @@ export default {
     return {
       center: [40.7608, -111.891],
       map: null,
+      busMarkers: null,
     };
   },
   computed: {
     busLocations: function () {
       return this.$store.state.busLocations;
     },
+    blackIcon: function () {
+      return L.icon({
+        iconUrl: busIcon,
+        iconSize: [20, 20],
+      });
+    },
+    greenIcon: function () {
+      return L.icon({
+        iconUrl: greenBusIcon,
+        iconSize: [20, 20],
+      });
+    },
+    routeStyle: function () {
+      return {
+        color: 'blue',
+        opacity: 0.5,
+        weight: 2,
+      };
+    }
   },
   watch: {
     busLocations: function () {
-      this.drawBuses();
+      if (this.busMarkers != null) {
+        this.updateBusPositions();
+      }
     }
   },
   methods: {
     drawBuses() {
-      const ref = this;
-      const myIcon1 = L.icon({
-        iconUrl: busIcon,
-        iconSize: [20, 20],
-      });
-      const myIcon2 = L.icon({
-        iconUrl: redBusIcon,
-        iconSize: [20, 20],
-      });
-      
+      const ref = this;      
       function onEachFeature(feature, layer) {
         layer.bindTooltip(feature.properties.id);
         layer.on({
             click: function () {
-              console.log('wut');
               ref.selectedIcon = layer;
-              layer.setIcon(myIcon2);
               ref.$store.dispatch('changeBus', feature.properties.id);
             }
         });
       }
 
-      L.geoJson(this.busLocations, { 
+      this.busMarkers = L.geoJson(this.busLocations, { 
           pointToLayer: function (feature, latlng) {
-            return L.marker(latlng, { icon: myIcon1 });
+            if (feature.properties.converted) {
+              return L.marker(latlng, { icon: ref.greenIcon });
+            }
+            return L.marker(latlng, { icon: ref.blackIcon });
           },
           onEachFeature: onEachFeature
-       }).addTo(this.map);
+       });
+
+       this.busMarkers.addTo(this.map);
     },
     drawMap() {
       this.map = L.map(this.$refs.mapElement).setView(this.center, 13);
@@ -71,21 +87,26 @@ export default {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(this.map);
 
-      const routeStyle = {
-        color: 'blue',
-        opacity: 0.5,
-        weight: 2,
-      };
-      L.geoJson(busRoutes, { style: routeStyle }).addTo(this.map);
-    }
+      L.geoJson(busRoutes, { style: this.routeStyle }).addTo(this.map);
+    },
+    updateBusPositions() {
+      let i = 0;
+      this.busMarkers.eachLayer((layer) => {
+        const coords = this.busLocations.features[i].geometry.coordinates;
+        if (layer._latlng.lng !== coords[0] || layer._latlng.lat !== coords[1]) {
+          layer.setLatLng([coords[1], coords[0]]);
+          i++;
+        }
+      });
+    },
   },
   mounted() {
     this.drawMap();
 
     this.$nextTick(() => {
-      console.log(this.busLocations.features[0]);
       this.drawBuses();
     });
+    // DRAW BUS STOPS?
     // const geojsonMarkerOptions = {
     //     radius: 1,
     //     fillColor: 'red',
