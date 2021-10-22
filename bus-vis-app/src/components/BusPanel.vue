@@ -11,7 +11,7 @@
           <p> Bus Line: {{ bus.line }} </p>
           <p> Converted: {{ bus.converted }} </p>
           <p> Bus Status: {{ busStatus }} </p>
-          <p> Last Stop: {{ bus.stops[0].stop_name }} </p>
+          <!-- <p> Last Stop: {{ bus.stops[0].stop_name }} </p> -->
           <p> Bus Environmental Impact: {{ bus.environmental_equity }} </p>
       </div>
       <div class="col">
