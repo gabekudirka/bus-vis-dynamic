@@ -4,17 +4,20 @@
         <div class="map">
             <BusMap /> 
         </div>
+        <TimeSlider />
     </div>
 </template>
 
 <script>
 import stopsList from '../data/allStops.json';
 import routesList from '../data/allRoutes.json';
+import TimeSlider from './TimeSlider.vue';
 import BusMap from './BusMap.vue';
 
 export default {
     name: 'MapPanel',
     components: {
+        TimeSlider,
         BusMap
     },
     props: {
@@ -76,7 +79,7 @@ export default {
                     const arvtime = (stp.arrival_time === '') ? new Date(dtstr + ' 00:00') : new Date(dtstr + ' ' + stp.arrival_time);
                     const deptime = (stp.departure_time === '') ? new Date(dtstr + ' 23:59') : new Date(dtstr + ' ' + stp.departure_time);
                     const nextArvtime = (i < bus.stops.length - 1) ? new Date(dtstr + ' ' + bus.stops[i + 1].arrival_time) : new Date(dtstr + ' 00:00');
-                    // if (bus.id !== '1000') {
+                    // if (bus.id !== '1000' && bus.id !== '1009') {
                     //     continue;
                     // }
 
@@ -113,6 +116,13 @@ export default {
             });
             return busLocs;
         },
+        calcDistBetwPts(pt1, pt2) {
+            console.log(pt1, pt2);
+            const dist0 = pt1[0] - pt2[0];
+            const dist1 = pt1[1] - pt2[1];
+            // sum of total distance
+            return Math.sqrt(dist0 * dist0 + dist1 * dist1);
+        },
         // calculate the current coordinates of a bus between stop1 and stop2
         calcBusCoords(stop1, stop2, line, dtstr = '1/1/2000') {
             const curTime = new Date(dtstr + ' ' + this.time);
@@ -121,7 +131,17 @@ export default {
             const totalTime = stop2atime - stop1dtime;
             const route = routesList.find((rt) => rt.lineAbbr === line); // shape_length
             const curTimeMil = curTime - new Date(dtstr + ' :00:00');
-            const scaledLen = (curTimeMil * route.path_length) / totalTime; // use time ratio to calc distance traveled
+            
+            // const station1 = stopsList.find((station) => station.stopName.replace(/\s/g, '') === stop1.stop_name.replace(/\s/g, ''));
+            // const station2 = stopsList.find((station) => station.stopName.replace(/\s/g, '') === stop2.stop_name.replace(/\s/g, ''));
+            // console.log('----');
+            // console.log(station1, stop1);
+            // console.log(station2, stop2);
+            // const segmentLen = this.calcDistBetwPts(station1.coordinates, station2.coordinates);
+            // const scaledLen = (curTimeMil * segmentLen) / totalTime; // use time ratio to calc distance traveled
+            // TODO this should be distace between two station coordinates
+
+            const scaledLen = (curTimeMil * route.path_length) / totalTime;
 
             // sum distance between each stop until we reach the distance traveled, then return those coordinates
             let sumDist = 0;
