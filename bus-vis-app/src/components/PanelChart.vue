@@ -92,6 +92,15 @@ export default {
                         yScale.domain([0, (domainMax + (20 - (domainMax % 20)))]);
                     }
                     break;
+                case ('stations-chart'):
+                    xScale.domain(d3.extent(this.data, xAccessor));
+                    if (d3.max(this.data, yAccessor) <= 35) {
+                        yScale.domain([0, 35]);
+                    } else {
+                        const domainMax = d3.max(this.data, yAccessor);
+                        yScale.domain([0, (domainMax + (20 - (domainMax % 20)))]);
+                    }
+                    break;
                 default:
                     break;
             }
