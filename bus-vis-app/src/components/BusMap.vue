@@ -12,7 +12,7 @@ import L from 'leaflet';
 import busRoutes from '../data/BusRoutes_UTA.json';
 import greenBusIcon from '../assets/images/busIconGreen.png';
 import busIcon from '../assets/images/busIcon.png';
-// import busStops from '../data/BusStops_UTA.json';
+import busStops from '../data/BusStops_UTA.json';
 
 export default {
   name: 'BusMap',
@@ -48,6 +48,16 @@ export default {
         opacity: 0.5,
         weight: 2,
       };
+    },
+    busStopStyle: function () {
+      return {
+        radius: 1,
+        fillColor: 'black',
+        color: '#000',
+        weight: 1,
+        opacity: 0.8,
+        fillOpacity: 0.8
+    };
     }
   },
   watch: {
@@ -105,11 +115,11 @@ export default {
           layer.setLatLng([coords[1], coords[0]]);
           i++;
         }
-        if (this.busLocations.features[i].properties.converted) {
-          layer.setIcon(this.greenIcon);
-        } else {
-          layer.setIcon(this.blackIcon);
-        }
+        // if (this.busLocations.features[i].properties.converted) {
+        //   layer.setIcon(this.greenIcon);
+        // } else {
+        //   layer.setIcon(this.blackIcon);
+        // }
       });
     },
   },
@@ -120,24 +130,24 @@ export default {
       this.drawBuses();
     });
     // DRAW BUS STOPS?
-    // const geojsonMarkerOptions = {
-    //     radius: 1,
-    //     fillColor: 'red',
-    //     color: '#000',
-    //     weight: 1,
-    //     opacity: 0.8,
-    //     fillOpacity: 0.8
-    // };
+    const geojsonMarkerOptions = {
+        radius: 1,
+        fillColor: 'red',
+        color: '#000',
+        weight: 1,
+        opacity: 0.8,
+        fillOpacity: 0.8
+    };
 
-    // L.geoJson(busStops, {
-    //     pointToLayer: function (feature, latlng) {
-    //         return L.circleMarker(latlng, geojsonMarkerOptions);
-    //     }
-    // }).addTo(this.busMap);
+    L.geoJson(busStops, {
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
+    }).addTo(this.map);
   },
   beforeUnmount() {
-    if (this.busMap) {
-      this.busMap.remove();
+    if (this.map) {
+      this.map.remove();
     }
   },
 };

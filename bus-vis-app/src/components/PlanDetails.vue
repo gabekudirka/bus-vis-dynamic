@@ -31,15 +31,6 @@
             <li>
                 <p> <b> Number of charging stations to be built: </b> <br> {{ planData.num_charging_stations }}</p>
             </li>
-            <li>
-                <p><b> Locations of charging locations: </b></p>
-                <ul id="charging-station-locations" class="scroll">
-                    <li v-for="station in planData.charging_stations" :key="station.stop_name">
-                        {{station.num_stations}} station built at {{ station.stop_name }}
-                    </li>
-                </ul>
-                <br>
-            </li>
         </ul>
     </div>
 </div>
