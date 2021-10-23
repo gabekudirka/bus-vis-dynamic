@@ -9,7 +9,7 @@
             Bus {{ bus.id }} 
           </h4>
           <p> Bus Line: {{ bus.line }} </p>
-          <p> Converted: {{ bus.converted }} </p>
+          <p> {{ converted }} </p>
           <p> Bus Status: {{ busStatus }} </p>
           <!-- <p> Last Stop: {{ bus.stops[0].stop_name }} </p> -->
           <p> Bus Environmental Impact: {{ bus.environmental_equity }} </p>
@@ -73,6 +73,9 @@ export default {
         },
         bus: function () {
             return this.planBusObj.buses.find((bus) => bus.id === this.busId);
+        },
+        converted: function () {
+            return this.bus.converted ? 'Converted Bus' : 'Not Converted';
         },
         chargeChartData: function () {
             const chargeData = [];
