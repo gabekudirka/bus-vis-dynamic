@@ -3,11 +3,11 @@
     <ListContainer class="left-sidebar sidebars" :key="plan" :planBusses="planBusObj" :planObj="planObj"/>
     <div class="main-panel">
       <div class="top-main">
-        <MapPanel class="MAP" :planObj="planBusObj"> </MapPanel>
-        <PlanDetails class="right-sidebar"/>
+        <MapPanel class="MAP panel" :planObj="planBusObj"> </MapPanel>
+        <PlanDetails class="right-sidebar panel"/>
       </div>
-      <BusPanel v-if="showBusses" :key="plan" :planObj="planObj" :planBusObj="planBusObj" class="bottom-main"/>
-      <StationPanel v-if="!showBusses" :key="plan" :planObj="planObj" class="bottom-main"/>
+      <BusPanel v-if="showBusses" :key="plan" :planObj="planObj" :planBusObj="planBusObj" class="bottom-main panel"/>
+      <StationPanel v-if="!showBusses" :key="plan" :planObj="planObj" class="bottom-main panel"/>
     </div>
   </div>
 </template>
@@ -88,6 +88,7 @@ export default {
   display:flex;
   flex-direction:row;
   height: 100vh;
+  background-color: #e8f3f2;
 }
 .left-sidebar{
   max-width:30vw;
@@ -95,6 +96,14 @@ export default {
   flex:1;
   overflow-y:auto;
   height:100%;
+}
+
+.panel{
+  background-color: #fff;
+  margin: .5em;
+  padding: .5em;
+  filter: drop-shadow(1px 1px 3px #dfdfdf);
+  border-radius: 5px;
 }
 
 .main-panel{
@@ -110,7 +119,6 @@ export default {
 .bottom-main{
   flex:1;
   max-height: 25vh;
-  background-color: #ededed;
 }
 .right-sidebar{
   max-width:20vw;

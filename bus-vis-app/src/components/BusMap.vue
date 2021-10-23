@@ -66,7 +66,8 @@ export default {
     stationPanelIcon: function () {
       return L.icon({
         iconUrl: chargingStationIcon,
-        iconSize: [40, 40],
+        iconSize: [35, 35],
+        class: 'station'
       });
     }
   },
@@ -202,6 +203,6 @@ export default {
 #mapContainer {
   /* Not sure how to handle the height here */
   width: 60vw;
-  height: 63vh;
+  height: 60vh;
 }
 </style>
