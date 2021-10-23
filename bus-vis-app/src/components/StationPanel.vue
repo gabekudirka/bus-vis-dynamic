@@ -24,20 +24,32 @@
                     <td> {{ bussesAtStation.length * powerOutPerBus}} </td>
                 </tr>
             </table>    
-            <div class="flex1"> <TimeSlider /> </div>
-            <div class="flex1"> PUT CHART2 HERE </div>
+            <div class="flex1">
+                <div v-show="selectedStation.converted" id="charge-chart-container">
+                    <p class="chart-title"> <b> Num Buses @ Station </b> </p>
+                    <PanelChart
+                        :key="stationChartData"
+                        :data="stationChartData"
+                        :chartName="'stations-chart'"
+                        :containerWidth="chartSize.width"
+                        :containerHeight="chartSize.height"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import TimeSlider from './TimeSlider.vue';
+
+import PanelChart from './PanelChart.vue';
 import stopsList from '../data/allStops.json';
+import busesAtStations from '../data/BusesAtStations.json';
 
 export default {
     name: 'StationPanel',
     components: {
-        TimeSlider,
+        PanelChart,
     },
     props: {
         planObj: {
@@ -48,6 +60,10 @@ export default {
     data() {
         return {
             powerOutPerBus: 1, // TODO: figure out number
+            chartSize: {
+                height: 210,
+                width: 400
+            }
         };
     },
     computed: {
@@ -57,16 +73,6 @@ export default {
         planStations: function () {
             return this.planObj.charging_stations;
         },
-        // stations: function () {
-        //     const list = [];
-        //     this.planStations.forEach((station) => {
-        //         const st = stopsList.find((stop) => stop.stopName === station.stop_name);
-        //         // TODO: use filter?? Multiple stops with same name but diff ids...
-        //         list.push({ ...station, ...st, converted: true });
-        //     });
-        //     console.log(list);
-        //     return list;
-        // },
         selectedStation: function () {
             // find the charging station object 
             let chStation = this.planStations.find((station) => station.stop_id === this.stationID);
@@ -77,16 +83,6 @@ export default {
             // find the stop
             const stp = stopsList.find((stop) => stop.stopName === chStation.stop_name);
             return { ...chStation, ...stp, converted: true };
-
-            // // try to find a charging station @ stop
-            // let st = this.stations.find((station) => station.stopId === this.stationID);
-            // // otherwise just show stop info
-            // if (!st) {
-            //     st = stopsList.find((stop) => stop.stopId === this.stationID);
-            // }
-            // console.log('here');
-            // console.log(st);
-            // return st;
         },
         busLocations: function () {
             return this.$store.state.busLocations;
@@ -97,7 +93,18 @@ export default {
             const busses = this.busLocations.features.filter((bus) => (bus.geometry.coordinates[0] === this.selectedStation.coordinates[0]) 
                                                             && (bus.geometry.coordinates[1] === this.selectedStation.coordinates[1]));
             return busses.map((b) => b.busID);
-        }
+        },
+        // TODO: FINISH
+        stationChartData: function () {
+            const data = busesAtStations[this.selectedStation.stop_name];
+            console.log('stData', data.busTimes);
+            const stationData = [];
+            Object.keys(data.busTimes).forEach((time) => {
+                stationData.push({ x: time, y: data.busTimes[time].length });
+            });
+            console.log(stationData);
+            return stationData;
+        },
     },
 };
 

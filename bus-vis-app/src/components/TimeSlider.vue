@@ -1,8 +1,7 @@
 <template>
     <div id="vis">
-        <svg id="slider-svg" :viewBox="viewBox">
-        </svg>
-        <button id="play-button">Play</button>
+        <svg id="slider-svg" :viewBox="viewBox"></svg>
+        <i class="fas fa-play" id="play-button"></i>
     </div>
 </template>
 
@@ -20,7 +19,7 @@ export default {
                 left: 50
             },
             containerWidth: 960,
-            containerHeight: 500,
+            containerHeight: 100,
             timer: 0,
             currentValue: 0,
             moving: false,
@@ -84,7 +83,7 @@ export default {
 
             this.slider = this.svg.append('g')
                 .attr('class', 'slider')
-                .attr('transform', `translate(${this.margin.left},${this.height / 5})`);
+                .attr('transform', `translate(${this.margin.left},40)`);
 
             this.slider.append('line')
                 .attr('class', 'track')
@@ -105,7 +104,7 @@ export default {
                 .attr('class', 'ticks')
                 .attr('transform', `translate(0,${18})`)
             .selectAll('text')
-                .data(this.xScale.ticks(20))
+                .data(this.xScale.ticks(13)) // changes step in labels
                 .enter()
                 .append('text')
                 .attr('x', this.xScale)
@@ -134,20 +133,20 @@ export default {
                     ref.moving = false;
                     ref.currentValue = 0;
                     clearInterval(timer);
-                    ref.playButton.text('Play');
+                    ref.attr('class', 'fas fa-play');
                 }
             };
             
             this.playButton.on('click', function () {
                 const button = d3.select(this);
-                if (button.text() === 'Pause') {
+                if (this.moving) {
                     this.moving = false;
                     clearInterval(timer);
-                    button.text('Play');
+                    button.attr('class', 'fas fa-play');
                 } else {
                     this.moving = true;
                     timer = setInterval(step, 100);
-                    button.text('Pause');
+                    button.attr('class', 'fas fa-pause');
                 }
             });
         }
@@ -160,28 +159,30 @@ export default {
 </script>
 
 <style>
+    #vis{
+        display: flex;
+        padding: 10px 0;
+        align-items: center;
+    }
+
     #play-button {
-      position: absolute;
-      top: 140px;
-      left: 50px;
-      background: #f08080;
-      padding-right: 26px;
-      border-radius: 3px;
-      border: none;
-      color: white;
-      margin: 0;
-      padding: 0 12px;
-      width: 60px;
+      margin-right:.8em;
+      color: lightseagreen;
       cursor: pointer;
-      height: 30px;
+      font-size: 11pt;
     }
 
     #play-button:hover {
-      background-color: #696969;
-    }    
+      color: #696969;
+    } 
+    
+    .label {
+        font-size: 14pt;
+    }
     
     .ticks {
-      font-size: 10px;
+      font-size: 16pt;
+      padding-top:0.5em;
     }
 
     .track,
@@ -191,13 +192,13 @@ export default {
     }
 
     .track {
-      stroke: #000;
+      stroke: #696969;
       stroke-opacity: 0.3;
       stroke-width: 10px;
     }
 
     .track-inset {
-      stroke: #dcdcdc;
+      stroke: #efefef;
       stroke-width: 8px;
     }
 
@@ -209,9 +210,8 @@ export default {
     }
 
     .handle {
-      fill: #fff;
-      stroke: #000;
-      stroke-opacity: 0.5;
-      stroke-width: 1.25px;
+      fill: powderblue;
+      stroke: powderblue;
+      stroke-width: 5px;
     }
 </style>
