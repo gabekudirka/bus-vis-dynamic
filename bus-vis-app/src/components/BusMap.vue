@@ -66,7 +66,7 @@ export default {
     stationPanelIcon: function () {
       return L.icon({
         iconUrl: chargingStationIcon,
-        iconSize: [35, 35],
+        iconSize: [40, 40],
         class: 'station'
       });
     }
@@ -99,6 +99,7 @@ export default {
       const ref = this;
       function onEachFeature(feature, layer) {
         layer.setZIndexOffset(-100);
+        layer.setOpacity(0.9);
         layer.bindTooltip(`<p><b>Station ID: </b> ${feature.properties.stop_id}</p>
                            <p><b>Stop Name: </b> ${feature.properties.stop_name}</p>
                            <p><b>Number of stations: </b>${feature.properties.num_stations}</p>`);
@@ -201,6 +202,6 @@ export default {
 
 <style scoped>
 #mapContainer {
-  height: 60vh;
+  min-height: 63vh;
 }
 </style>

@@ -1,6 +1,6 @@
 /* eslint-disable */
 <template>
-<div class="container side-panel-box">
+<div class="container">
     <div class="row">
         <div style="padding:1em; margin-left:auto; margin-right:auto">
             <!-- <label for="plan-select">Deployment plan:</label> -->
@@ -14,22 +14,27 @@
     <!-- <div id="plan-name" class="row left-align">
         <h2>{{ planselect }}</h2>
     </div> -->
-    <div id="plan-details" class="row left-align">
+    <div id="plan-details" class="row">
         <ul>
             <li>
-                <p> <b>Total Cost of the plan: </b> <br> {{ planCost }} </p>
+                <p> <b>Total Cost: </b> </p>
+                <p class="plan-data"> {{ planCost }} </p>
             </li>
             <li>
-                <p> <b> Plan Environmental Equity: </b> <br> {{ planData.env_equity }}</p>
+                <p> <b> Total Environmental Equity: </b> </p>
+                <p class="plan-data"> {{ planData.env_equity }} </p>
             </li>
             <li>
-                <p> <b> Number of buses converted: </b> <br> {{ planData.num_buses }}</p>
+                <p> <b> Buses Converted: </b> </p>
+                <p class="plan-data"> {{ planData.num_buses }} </p>
             </li>
             <li>
-                <p> <b> Total miles electrified: </b> <br>{{ planData.num_miles }}</p>
+                <p> <b> Daily Miles Electrified: </b> </p>
+                <p class="plan-data"> {{ planData.num_miles }} </p>
             </li>
             <li>
-                <p> <b> Number of charging stations to be built: </b> <br> {{ planData.num_charging_stations }}</p>
+                <p> <b> Charging Stations: </b> </p>
+                <p class="plan-data"> {{ planData.num_charging_stations }} </p>
             </li>
         </ul>
     </div>
@@ -84,39 +89,36 @@ ul {
     padding: 0;
     list-style-type: none;
 }
-
-#charging-station-locations {
-    /* This should be changed to be dynamic*/
-    height: 300px;
+#plan-details{
+    display:block;
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+    padding-top:15px;
 }
-
-#plan-name {
-    text-align: left;
-    padding-left: 1em;
-    padding-bottom: 0.25em;
-}
-
-.scroll {
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.left-align{
-    text-align: left;
-    padding: 1em;
-}
-
 p{
-    margin-bottom:0.5em !important;
+    margin-bottom:0.25em !important;
 }
-
 select {
     border-radius: 8px;
     border: none;
     padding: 7px;
     background-color: #efefef;
-}
+}   
 select:focus-visible {
     outline: none
+}
+option {
+    font-size:12pt;
+}
+.plan-data {
+    padding-top:0;
+    font-size: 16pt;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color:#4f4f4f;
+    padding-bottom:5px;
+}
+.container {
+    display:block;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div id="vis">
-        <svg id="slider-svg" :viewBox="viewBox"></svg>
         <i class="fas fa-play" id="play-button"></i>
+        <svg id="slider-svg" :viewBox="viewBox"></svg>
     </div>
 </template>
 
@@ -160,55 +160,49 @@ export default {
 
 <style>
     #vis{
+        padding-top: 2px;
         display: flex;
-        padding: 10px 0;
         align-items: center;
+        width: 72%;
+        margin: auto;
     }
-
     #play-button {
-      margin-right:.8em;
+      margin-right:1em;
+      margin-bottom: 0.8em;
       color: lightseagreen;
       cursor: pointer;
-      font-size: 11pt;
+      font-size: 20pt;
     }
-
     #play-button:hover {
       color: #696969;
     } 
-    
     .label {
-        font-size: 14pt;
+        font-size: 11pt;
     }
-    
     .ticks {
-      font-size: 16pt;
+      font-size: 10pt;
       padding-top:0.5em;
     }
-
     .track,
     .track-inset,
     .track-overlay {
       stroke-linecap: round;
     }
-
     .track {
       stroke: #696969;
       stroke-opacity: 0.3;
       stroke-width: 10px;
     }
-
     .track-inset {
       stroke: #efefef;
       stroke-width: 8px;
     }
-
     .track-overlay {
       pointer-events: stroke;
       stroke-width: 50px;
       stroke: transparent;
       cursor: crosshair;
     }
-
     .handle {
       fill: powderblue;
       stroke: powderblue;

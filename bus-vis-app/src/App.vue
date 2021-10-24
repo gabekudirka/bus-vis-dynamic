@@ -91,10 +91,9 @@ body{
   display:flex;
   flex-direction:row;
   height: 100vh;
-  overflow-x: hidden;
+  overflow-y: hidden;
 }
 .left-sidebar{
-
   width:20vw;
   flex:1;
   overflow-y:auto;
@@ -104,21 +103,18 @@ body{
   top: 0;
   left: 0;
 }
-
 .panel{
   background-color: #fff;
-  margin: .5em;
-  padding: .5em;
+  margin: .25em;
+  padding: .25em;
   filter: drop-shadow(1px 1px 3px #dfdfdf);
   border-radius: 5px;
 }
-
 .main-panel{
   flex:3;
   display:flex;
   flex-direction:column;
   margin-left: 20vw;
-  height: 65vh;
 }
 .top-main{
   flex:4;
@@ -126,14 +122,15 @@ body{
 }
 .bottom-main{
   flex:1;
+  max-height: 27vh;
 }
 .right-sidebar{
   flex:1;
+  max-width: 15vw;
 }
 .MAP{
   flex:3;
 }
-
 .bottom-border{
   border-bottom: 1px solid grey;
 }

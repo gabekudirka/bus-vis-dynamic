@@ -4,7 +4,9 @@
         <div class="map">
             <BusMap /> 
         </div>
-        <TimeSlider />
+        <div class="time-slider">
+            <TimeSlider />
+        </div>
     </div>
 </template>
 
@@ -186,8 +188,12 @@ export default {
 </script>
 
 <style>
-.left-align{
+.left-align {
     text-align: left;
     padding:1em;
+}
+.time-slider {
+    top:5px;
+    height:3vh;
 }
 </style>
