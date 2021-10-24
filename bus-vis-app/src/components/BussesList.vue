@@ -37,14 +37,8 @@ export default {
         },
         planBusses: function () {
             const bs = this.planObj;
-            return bs.buses.sort((a, b) => (a.id > b.id) ? 1 : -1);
-            // let bs = p180.buses;
-            // if (this.plan === 'p20') {
-            //     bs = p20.buses;
-            // } else if (this.plan === 'p60') {
-            //     bs = p60.buses;
-            // }
-            // return bs.sort((a, b) => (a.id > b.id) ? 1 : -1);            
+            const s1 = bs.buses.sort((a, b) => (a.id > b.id) ? 1 : -1);
+            return s1.sort((a, b) => (a.converted > b.converted) ? -1 : 1);           
         },
     },
     methods: {
