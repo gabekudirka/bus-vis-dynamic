@@ -2,7 +2,7 @@
 <template>
 <div class="container side-panel-box">
     <div class="row">
-        <div style="padding:1em">
+        <div style="padding:1em; margin-left:auto; margin-right:auto">
             <!-- <label for="plan-select">Deployment plan:</label> -->
             <select @change="changePlan()" v-model="planselect" name="plan-select" id="plan-select">
                 <option value="Plan 1">Deployment Plan 1</option>

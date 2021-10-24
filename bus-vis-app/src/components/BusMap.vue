@@ -201,8 +201,6 @@ export default {
 
 <style scoped>
 #mapContainer {
-  /* Not sure how to handle the height here */
-  width: 60vw;
   height: 60vh;
 }
 </style>

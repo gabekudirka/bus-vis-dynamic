@@ -72,5 +72,8 @@ ul#stationsList > li:nth-of-type(odd) {
     padding: 0.6em;
     text-align:left;
 }
+.listItem:hover{
+    background-color: #cdeceb !important;
+}
 
 </style>

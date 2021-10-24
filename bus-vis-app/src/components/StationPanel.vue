@@ -1,41 +1,33 @@
 /* eslint-disable max-len prefer-destructuring */
 <template>
     <div class="left-align">
-        <h4>
-            <i class="fas fa-charging-station"></i>
-             {{selectedStation.stopName}} 
-        </h4>
-        <div class="sidebyside">
-            <table id="stationInfo" class="flex1">
-                <tr>
-                    <td> UTA Stop ID </td>
-                    <td> {{selectedStation.stopId}} </td>
-                </tr>
-                <tr> 
-                    <td>Busses @ Station </td>
-                    <td class="sidebyside">
-                        <div v-for="bus in bussesAtStation" :key="bus" class="busnum">
-                            {{bus}}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td> Current Power Output </td>
-                    <td> {{ bussesAtStation.length * powerOutPerBus}} </td>
-                </tr>
-            </table>    
-            <div class="flex1">
-                <div v-show="selectedStation.converted" id="charge-chart-container">
-                    <p class="chart-title"> <b> Num Buses @ Station </b> </p>
-                    <PanelChart
-                        :key="stationChartData"
-                        :data="stationChartData"
-                        :chartName="'stations-chart'"
-                        :containerWidth="chartSize.width"
-                        :containerHeight="chartSize.height"
-                    />
+        <div style="padding:1em">
+            <h4>
+                <i class="fas fa-charging-station"></i>
+                {{selectedStation.stopName}} 
+            </h4>
+            <div class="sidebyside">
+                <div class="stationInfo">
+                    <p> <b> UTA Stop: </b> <br> {{selectedStation.stopId}} </p>
+                    <p> <b> Buses @ Station: </b> </p>
+                    <p v-for="bus in bussesAtStation" :key="bus" class="busnum">
+                        {{bus}}
+                    </p>
+                    <p> <b> Current Power Output: </b> <br> {{ bussesAtStation.length * powerOutPerBus}} </p>
                 </div>
-            </div>
+                <div class="flex1">
+                    <div v-show="selectedStation.converted" id="charge-chart-container" class="chart">
+                        <p class="chart-title"> <b> Num Buses @ Station </b> </p>
+                        <PanelChart
+                            :key="stationChartData"
+                            :data="stationChartData"
+                            :chartName="'stations-chart'"
+                            :containerWidth="chartSize.width"
+                            :containerHeight="chartSize.height"
+                        />
+                    </div>
+                </div>
+             </div>
         </div>
     </div>
 </template>
@@ -92,7 +84,7 @@ export default {
             // busLocations show up as proxy object (figure out why) so we have to check each coordinate seperatesly
             const busses = this.busLocations.features.filter((bus) => (bus.geometry.coordinates[0] === this.selectedStation.coordinates[0]) 
                                                             && (bus.geometry.coordinates[1] === this.selectedStation.coordinates[1]));
-            return busses.map((b) => b.busID);
+            return busses.map((b) => b.properties.id);
         },
         // TODO: FINISH
         stationChartData: function () {
@@ -111,10 +103,10 @@ export default {
 </script>
 
 <style>
-.left-align{
+/* .left-align{
     text-align: left;
-    padding:.6em;
-}
+    padding:1em;
+} */
 p{
     margin: 0.2em !important;
 }
@@ -122,25 +114,21 @@ p{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 .flex1 {
     flex: 1;
     padding: .2em;
 }
 .busnum {
-    padding:0 .1em;
+    display: inline-block;
 }
-#stationInfo{
-    border: 1px solid #efefef;
+.stationInfo{
+    max-width:30vw;
+    margin-right:1em;
 }
-#stationInfo > tr > td:first-child{ 
-    font-weight: bold;
-    background-color: #efefef;
-    border-bottom: 1px solid white;
-}
-td {
-    padding: 0.2em;
-    border-bottom: 1px solid #efefef;
+.chart{
+    max-width:40vw;
 }
 
 </style>

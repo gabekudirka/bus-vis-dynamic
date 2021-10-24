@@ -73,6 +73,9 @@ export default {
 </script>
 
 <style>
+body{
+  background-color: #e8f3f2;
+}
 .sidebars {
   background-color: #efefef;
 }
@@ -88,14 +91,18 @@ export default {
   display:flex;
   flex-direction:row;
   height: 100vh;
-  background-color: #e8f3f2;
+  overflow-x: hidden;
 }
 .left-sidebar{
-  max-width:30vw;
-  min-width: 20vw;
+
+  width:20vw;
   flex:1;
   overflow-y:auto;
   height:100%;
+  position: fixed;
+  z-index:1;
+  top: 0;
+  left: 0;
 }
 
 .panel{
@@ -110,20 +117,18 @@ export default {
   flex:3;
   display:flex;
   flex-direction:column;
+  margin-left: 20vw;
+  height: 65vh;
 }
 .top-main{
   flex:4;
   display: flex;
-  max-height: 75vh;
 }
 .bottom-main{
   flex:1;
-  max-height: 25vh;
 }
 .right-sidebar{
-  max-width:20vw;
   flex:1;
-  overflow-y:auto;
 }
 .MAP{
   flex:3;
