@@ -171,16 +171,20 @@ export default {
     updateBusPositions() {
       let i = 0;
       this.busMarkers.eachLayer((layer) => {
-        const coords = this.busLocations.features[i].geometry.coordinates;
+        const bus = this.busLocations.features[i];
+        layer.bindTooltip(`<p><b>Bus ID:</b> ${bus.properties.id}</p>
+                           <p><b>Bus Route:</b> ${bus.properties.route}</p>
+                           <p>${bus.properties.converted ? 'Converted' : 'Not converted'}</p>`);
+        const coords = bus.geometry.coordinates;
         if (layer._latlng.lng !== coords[0] || layer._latlng.lat !== coords[1]) {
           layer.setLatLng([coords[1], coords[0]]);
-          i++;
         }
-        if (this.busLocations.features[i].properties.converted) {
+        if (bus.properties.converted) {
           layer.setIcon(this.greenIcon);
         } else {
           layer.setIcon(this.blackIcon);
         }
+        i++;
       });
     },
   },

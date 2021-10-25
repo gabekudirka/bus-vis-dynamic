@@ -75,6 +75,7 @@ export default {
             const busLocs = {};
             busLocs.type = 'FeatureCollection';
             busLocs.features = [];
+            console.log(this.planObj.buses.length);
             this.planObj.buses.forEach((bus) => {
                 for (let i = 0; i < bus.stops.length; i++) {                
                     const stp = bus.stops[i];
@@ -94,6 +95,9 @@ export default {
                         if (stationObj) {
                             busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line));
                             break;
+                        } else {
+                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line));
+                            break;
                         }
                     // if dpt <= t <= next.arv   -> between stops.
                     } else if (deptime <= curTime && curTime <= nextArvtime) {
@@ -103,7 +107,10 @@ export default {
                         if (coords !== '') {
                             busLocs.features.push(this.geoJsonObj(bus.id, coords, bus.converted, bus.line));
                             break;
-                        }  
+                        } else {
+                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line));
+                            break;
+                        }
                     // t <= arv   -> usually means bus has not left the station for the day        
                     } else if (curTime <= arvtime) {
                         // console.log('Here3', stp);
@@ -111,9 +118,11 @@ export default {
                         if (stationObj) {
                             busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line));
                             break;
+                        } else {
+                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line));
+                            break;
                         }
-                        break;
-                    }
+                    } 
                 }
             });
             return busLocs;
