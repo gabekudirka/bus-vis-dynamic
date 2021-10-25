@@ -202,7 +202,13 @@ export default {
     padding:1em;
 }
 .time-slider {
-    top:5px;
-    min-height:3vh;
+    top:3px;
+    min-height:vh;
+    flex-shrink:0;
+}
+@media (max-height: 800px) {
+  .time-slider {
+    display: none;
+  }
 }
 </style>

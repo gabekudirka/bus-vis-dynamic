@@ -118,11 +118,11 @@ body{
 .top-main{
   flex:4;
   display: flex;
-  max-height: 75vh;
+  max-height: 68vh;
 }
 .bottom-main{
   flex:1;
-  max-height: 25vh;
+  max-height: 32vh;
   overflow-y: auto;
   overflow-x: hidden;
 }

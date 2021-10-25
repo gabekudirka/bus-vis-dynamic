@@ -206,10 +206,17 @@ export default {
 
 <style scoped>
 #mapContainer {
-  min-height: 63vh;
+  min-height: 57vh;
   background-color: #fff;
   margin: .25em;
   padding: .25em;
   filter: drop-shadow(1px 1px 3px #dfdfdf);
+  flex:5;
+}
+
+@media (max-height: 800px) {
+  #mapContainer {
+    min-height: 66vh;
+  }
 }
 </style>
