@@ -203,5 +203,9 @@ export default {
 <style scoped>
 #mapContainer {
   min-height: 63vh;
+  background-color: #fff;
+  margin: .25em;
+  padding: .25em;
+  filter: drop-shadow(1px 1px 3px #dfdfdf);
 }
 </style>

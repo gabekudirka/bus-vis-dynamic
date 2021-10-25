@@ -92,6 +92,7 @@ body{
   flex-direction:row;
   height: 100vh;
   overflow-y: hidden;
+  overflow-x: hidden;
 }
 .left-sidebar{
   width:20vw;
