@@ -28,6 +28,7 @@ module.exports = {
     'no-confusing-arrow' : 'off',
     'prefer-destructuring': 'off',
     'global-require': 'off',
-    'no-underscore-dangle': 'off'
+    'no-underscore-dangle': 'off',
+    'no-param-reassign': 'off'
     },
 };

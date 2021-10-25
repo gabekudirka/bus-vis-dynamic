@@ -1,33 +1,35 @@
 /* eslint-disable max-len prefer-destructuring */
 <template>
     <div class="left-align">
-        <div style="padding:1em">
-            <h4>
-                <i class="fas fa-charging-station"></i>
-                {{selectedStation.stopName}} 
-            </h4>
-            <div class="sidebyside">
-                <div class="stationInfo flex1">
-                    <p> <b> UTA Stop: </b> <br> {{selectedStation.stopId}} </p>
-                    <p> <b> Buses @ Station: </b> </p>
-                    <p v-for="bus in bussesAtStation" :key="bus" class="busnum">
-                        {{bus}}
-                    </p>
-                    <p> <b> Current Power Output: </b> <br> {{ bussesAtStation.length * powerOutPerBus}} </p>
-                </div>
-                <div class="flex1">
-                    <div v-show="selectedStation.converted" id="charge-chart-container" class="chart">
-                        <p class="chart-title"> <b> Num Buses @ Station </b> </p>
-                        <PanelChart
-                            :key="stationChartData"
-                            :data="stationChartData"
-                            :chartName="'stations-chart'"
-                            :containerWidth="chartSize.width"
-                            :containerHeight="chartSize.height"
-                        />
+        <div class="row1">
+            <div class="left-align flex1">
+                <h4>
+                    <i class="fas fa-charging-station"></i>
+                    {{selectedStation.stopName}} 
+                </h4>
+                <div class="sidebyside">
+                    <div class="stationInfo flex1">
+                        <p> <b> UTA Stop: </b> <br> {{selectedStation.stopId}} </p>
+                        <p> <b> Buses at Station: </b> </p>
+                        <p v-for="bus in bussesAtStation" :key="bus" class="busnum">
+                            {{bus}}
+                        </p>
+                        <p> <b> Current Power Output: </b> <br> {{ bussesAtStation.length * powerOutPerBus}} </p>
                     </div>
                 </div>
-             </div>
+            </div>
+            <div class="flex1">
+                <div v-show="selectedStation.converted" id="charge-chart-container" class="chart">
+                    <p class="chart-title"> <b> Num Buses at Station </b> </p>
+                    <PanelChart
+                        :key="stationChartData"
+                        :data="stationChartData"
+                        :chartName="'stations-chart'"
+                        :containerWidth="chartSize.width"
+                        :containerHeight="chartSize.height"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -110,25 +112,22 @@ export default {
 p{
     margin: 0.2em !important;
 }
-.sidebyside {
+.row1{
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction:row;
+    flex-wrap:wrap;
 }
 .flex1 {
     flex: 1;
-    padding: .2em;
 }
 .busnum {
     display: inline-block;
 }
 .stationInfo{
-    /* max-width:30vw; */
     margin-right:1em;
 }
 .chart{
-    max-width:31vw;
+    max-width:28vw;
 }
 
 </style>

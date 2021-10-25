@@ -1,15 +1,15 @@
 /* eslint-disable */
 <template>
-    <div class="left-align" style="padding:1em">
-        <h4 class="">
-            <i v-if="bus.converted" class="fas fa-plug" style="padding:.1em"></i>
-            <i class="fas fa-bus" style="padding:.1em"></i>
-            Bus {{ bus.id }} 
-        </h4>
+    <div class="left-align" style="padding:1em">    
         <div class="row1">
-            <div class="left-align flex1">
-                <p> <b> {{ converted }} </b> </p>
+            <div class="left-align flex1 col-3">
+                <h4>
+                    <i v-if="bus.converted" class="fas fa-plug" style="padding:.1em"></i>
+                    <i class="fas fa-bus" style="padding:.1em"></i>
+                    Bus {{ bus.id }} 
+                </h4>
                 <p> <b> Bus Line: </b> {{ bus.line }} </p>
+                <p> <b> {{ converted }} </b> </p>
                 <p> <b> Bus Status: </b> {{ busStatus }} </p>
                 <!-- <p> Last Stop: {{ bus.stops[0].stop_name }} </p> -->
                 <p> <b> Bus Environmental Impact: </b> {{ bus.environmental_equity }} </p>
@@ -131,7 +131,6 @@ export default {
         },
     }
 };
-
 </script>
 
 <style>
@@ -146,10 +145,9 @@ export default {
 }
 .flex1{
     flex:1;
-    padding:0.2em;
 }
 .chart-title{
-    padding-top:0.5em;
+    text-align: center;
 }
 p{
     margin: 0.2em !important;

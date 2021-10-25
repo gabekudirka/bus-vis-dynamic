@@ -122,13 +122,13 @@ body{
 }
 .bottom-main{
   flex:1;
-  max-height: 40vh;
-  overflow-y:auto;
-  overflow-x:hidden;
+  min-height: 27vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .right-sidebar{
   flex:1;
-  max-width: 20vw;
+  max-width: 15vw; 
   overflow-y: auto;
   overflow-x: hidden;
 }
