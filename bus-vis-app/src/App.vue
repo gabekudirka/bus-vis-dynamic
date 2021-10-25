@@ -91,7 +91,6 @@ body{
   display:flex;
   flex-direction:row;
   height: 100vh;
-  overflow-y: hidden;
 }
 .left-sidebar{
   width:20vw;
@@ -119,14 +118,19 @@ body{
 .top-main{
   flex:4;
   display: flex;
+  max-height: 60vh;
 }
 .bottom-main{
   flex:1;
-  max-height: 27vh;
+  max-height: 40vh;
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 .right-sidebar{
   flex:1;
-  max-width: 15vw;
+  max-width: 20vw;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .MAP{
   flex:3;

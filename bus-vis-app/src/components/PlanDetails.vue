@@ -2,7 +2,7 @@
 <template>
 <div class="container">
     <div class="row">
-        <div style="padding:1em; margin-left:auto; margin-right:auto">
+        <div style="padding:0.5em; margin-left:auto; margin-right:auto">
             <!-- <label for="plan-select">Deployment plan:</label> -->
             <select @change="changePlan()" v-model="planselect" name="plan-select" id="plan-select">
                 <option value="Plan 1">Deployment Plan 1</option>
@@ -88,13 +88,14 @@ export default {
 ul {
     padding: 0;
     list-style-type: none;
+    margin-bottom:0 !important;
 }
 #plan-details{
     display:block;
     text-align:center;
     margin-left:auto;
     margin-right:auto;
-    padding-top:15px;
+    /* padding-top:15px; */
 }
 p{
     margin-bottom:0.25em !important;
@@ -104,6 +105,10 @@ select {
     border: none;
     padding: 7px;
     background-color: #efefef;
+    overflow: hidden;
+    white-space: pre;
+    text-overflow: ellipsis;
+    max-width: 20vw;
 }   
 select:focus-visible {
     outline: none

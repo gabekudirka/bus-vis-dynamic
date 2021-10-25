@@ -7,7 +7,7 @@
                 {{selectedStation.stopName}} 
             </h4>
             <div class="sidebyside">
-                <div class="stationInfo">
+                <div class="stationInfo flex1">
                     <p> <b> UTA Stop: </b> <br> {{selectedStation.stopId}} </p>
                     <p> <b> Buses @ Station: </b> </p>
                     <p v-for="bus in bussesAtStation" :key="bus" class="busnum">
@@ -124,11 +124,11 @@ p{
     display: inline-block;
 }
 .stationInfo{
-    max-width:30vw;
+    /* max-width:30vw; */
     margin-right:1em;
 }
 .chart{
-    max-width:40vw;
+    max-width:31vw;
 }
 
 </style>

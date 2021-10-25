@@ -202,6 +202,6 @@ export default {
 
 <style scoped>
 #mapContainer {
-  min-height: 63vh;
+  height: 47vh;
 }
 </style>
