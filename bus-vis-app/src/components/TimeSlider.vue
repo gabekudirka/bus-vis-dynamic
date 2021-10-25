@@ -163,15 +163,13 @@ export default {
         padding-top: 2px;
         display: flex;
         align-items: center;
-        width: 72%;
-        margin: auto;
+        justify-content: center;
     }
     #play-button {
-      margin-right:1em;
-      margin-bottom: 0.8em;
+      margin:1em;
       color: lightseagreen;
       cursor: pointer;
-      font-size: 20pt;
+      font-size: 15pt;
     }
     #play-button:hover {
       color: #696969;
