@@ -9,7 +9,7 @@
         class="button toggle"
         @click="toggle"
         :class="[showBusses ? 'active' : '']"
-    >Busses</button>
+    >Buses</button>
     </div>
 </template>
 
