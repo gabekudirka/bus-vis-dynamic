@@ -203,6 +203,6 @@ export default {
 }
 .time-slider {
     top:5px;
-    height:3vh;
+    min-height:3vh;
 }
 </style>

@@ -124,7 +124,7 @@ body{
 .bottom-main{
   flex:1;
   min-height: 27vh;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 .right-sidebar{

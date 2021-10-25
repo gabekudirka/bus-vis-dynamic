@@ -2,7 +2,7 @@
 <template>
     <div class="left-align" style="padding:1em">    
         <div class="row1">
-            <div class="left-align flex1">
+            <div class="left-align flex1 col-3">
                 <h4>
                     <i v-if="bus.converted" class="fas fa-plug" style="padding:.1em"></i>
                     <i class="fas fa-bus" style="padding:.1em"></i>
