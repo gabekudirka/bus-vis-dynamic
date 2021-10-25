@@ -1,35 +1,41 @@
 /* eslint-disable */
 <template>
-    <div class="row1">
-        <div class="left-align flex1">
-            <h4>
-                <i v-if="bus.converted" class="fas fa-plug" style="padding:.1em"></i>
-                <i class="fas fa-bus" style="padding:.1em"></i>
-                Bus {{ bus.id }} 
-            </h4>
-            <p> <b> Bus Line: </b> {{ bus.line }} </p>
-            <p> <b> {{ converted }} </b> </p>
-            <p> <b> Bus Status: </b> {{ busStatus }} </p>
-            <!-- <p> Last Stop: {{ bus.stops[0].stop_name }} </p> -->
-            <p> <b> Bus Environmental Impact: </b> {{ bus.environmental_equity }} </p>
-        </div>
-        <div v-show="bus.converted" id="charge-chart-container" class="flex1">
-            <p class="chart-title"> <b> Charge level over time </b> </p>
-            <PanelChart
-            :data="chargeChartData"
-            :chartName="'charge-chart'"
-            :containerWidth="chartSize.width"
-            :containerHeight="chartSize.height"
-        />
-        </div>
-        <div id="miles-chart-container" class="flex1">
-            <p class="chart-title"> <b> Miles Driven </b> </p>
-            <PanelChart
-            :data="milesChartData"
-            :chartName="'miles-chart'"
-            :containerWidth="chartSize.width"
-            :containerHeight="chartSize.height"
-        />
+    <div class="left-align" style="padding:1em">    
+        <div class="row1">
+            <div class="left-align flex1">
+                <h4>
+                    <i v-if="bus.converted" class="fas fa-plug" style="padding:.1em"></i>
+                    <i class="fas fa-bus" style="padding:.1em"></i>
+                    Bus {{ bus.id }} 
+                </h4>
+                <p> <b> Bus Line: </b> {{ bus.line }} </p>
+                <p> <b> {{ converted }} </b> </p>
+                <p> <b> Bus Status: </b> {{ busStatus }} </p>
+                <!-- <p> Last Stop: {{ bus.stops[0].stop_name }} </p> -->
+                <p> <b> Bus Environmental Impact: </b> {{ bus.environmental_equity }} </p>
+            </div>
+            <div class="flex1">
+                <div id="miles-chart-container" class="chart">
+                    <p class="chart-title"> <b> Miles Driven </b> </p>
+                    <PanelChart
+                        :data="milesChartData"
+                        :chartName="'miles-chart'"
+                        :containerWidth="chartSize.width"
+                        :containerHeight="chartSize.height"
+                    />
+                </div>
+            </div>
+            <div class="flex1">
+                <div v-show="bus.converted" id="charge-chart-container" class="chart">
+                    <p class="chart-title"> <b> Charge level over time </b> </p>
+                    <PanelChart
+                        :data="chargeChartData"
+                        :chartName="'charge-chart'"
+                        :containerWidth="chartSize.width"
+                        :containerHeight="chartSize.height"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -125,7 +131,6 @@ export default {
         },
     }
 };
-
 </script>
 
 <style>
@@ -140,12 +145,14 @@ export default {
 }
 .flex1{
     flex:1;
-    padding:0.3em;
 }
 .chart-title{
-    padding-top:0.5em;
+    text-align: center;
 }
 p{
-    margin-bottom:0.5em !important;
+    margin: 0.2em !important;
+}
+.chart{
+    max-width:31vw;
 }
 </style>

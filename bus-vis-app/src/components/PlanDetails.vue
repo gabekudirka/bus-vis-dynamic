@@ -88,6 +88,7 @@ export default {
 ul {
     padding: 0;
     list-style-type: none;
+    margin-bottom:0 !important;
 }
 #plan-details{
     display:block;
@@ -104,6 +105,10 @@ select {
     border: none;
     padding: 7px;
     background-color: #efefef;
+    overflow: hidden;
+    white-space: pre;
+    text-overflow: ellipsis;
+    max-width: 20vw;
 }   
 select:focus-visible {
     outline: none

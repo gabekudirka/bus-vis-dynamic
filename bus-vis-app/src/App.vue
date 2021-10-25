@@ -123,11 +123,15 @@ body{
 }
 .bottom-main{
   flex:1;
-  max-height: 27vh;
+  min-height: 27vh;
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 .right-sidebar{
   flex:1;
-  max-width: 15vw;
+  max-width: 15vw; 
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .MAP{
   flex:3;
