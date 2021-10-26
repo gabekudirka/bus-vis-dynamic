@@ -76,7 +76,6 @@ export default {
             const busLocs = {};
             busLocs.type = 'FeatureCollection';
             busLocs.features = [];
-            console.log(this.planObj.buses.length);
             this.planObj.buses.forEach((bus) => {
                 for (let i = 0; i < bus.stops.length; i++) {                
                     const stp = bus.stops[i];
@@ -129,7 +128,6 @@ export default {
             return busLocs;
         },
         calcDistBetwPts(pt1, pt2) {
-            console.log(pt1, pt2);
             const dist0 = pt1[0] - pt2[0];
             const dist1 = pt1[1] - pt2[1];
             // sum of total distance
@@ -168,7 +166,6 @@ export default {
                     return route.coordinates[i][0];
                 }
             }
-            console.log(sumDist, scaledLen);
             return '';
         },
         // // returns true if t1 is >= t2. Only for military time

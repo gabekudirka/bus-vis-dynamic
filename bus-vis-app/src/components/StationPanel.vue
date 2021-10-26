@@ -91,12 +91,10 @@ export default {
         // TODO: FINISH
         stationChartData: function () {
             const data = busesAtStations[this.selectedStation.stop_name];
-            console.log('stData', data.busTimes);
             const stationData = [];
             Object.keys(data.busTimes).forEach((time) => {
                 stationData.push({ x: time, y: data.busTimes[time].length });
             });
-            console.log(stationData);
             return stationData;
         },
     },
