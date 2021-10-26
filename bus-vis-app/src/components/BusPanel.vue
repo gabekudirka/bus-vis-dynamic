@@ -42,6 +42,7 @@
 
 <script>
 import PanelChart from './PanelChart.vue';
+import stopsList from '../data/allStops.json';
 
 export default {
     name: 'BusPanel',
@@ -107,15 +108,10 @@ export default {
             return milesData;
         },
         busStatus: function () {
-            const location = this.$store.state.busLocations.features.find((bus) => bus.properties.id === this.busId);
-            const chStation = this.planObj.charging_stations.find((station) => station.coordinates === location);
-            if (chStation) {
-                return 'At Charging Station';
+            const busob = this.$store.state.busLocations.features.find((bus) => bus.properties.id === this.busId);
+            if (busob.properties.atStation) {
+                return 'At Stop';
             }
-            // const stp = stopsList.find((stop) => stop.coordinates === location);
-            // if (stp) {
-            //     return 'At Stop';
-            // }
             return 'On Route';
         },
     },

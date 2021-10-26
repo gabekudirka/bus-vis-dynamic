@@ -55,13 +55,14 @@ export default {
         this.$store.dispatch('changeBusLocations', busLocs);
     },
     methods: {
-        geoJsonObj(busId, busCoordinates, converted, line) {
+        geoJsonObj(busId, busCoordinates, converted, line, atStation = false) {
             return { 
                 type: 'Feature',
                 properties: { 
                     id: busId,
                     converted: converted,
                     route: line,
+                    atStation: atStation
                 },
                 geometry: {
                     type: 'Point',
@@ -93,10 +94,10 @@ export default {
                         
                         // TODO: add atStation if at charging station?
                         if (stationObj) {
-                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line));
+                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line, true));
                             break;
                         } else {
-                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line));
+                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line, true));
                             break;
                         }
                     // if dpt <= t <= next.arv   -> between stops.
@@ -145,9 +146,6 @@ export default {
             
             // const station1 = stopsList.find((station) => station.stopName.replace(/\s/g, '') === stop1.stop_name.replace(/\s/g, ''));
             // const station2 = stopsList.find((station) => station.stopName.replace(/\s/g, '') === stop2.stop_name.replace(/\s/g, ''));
-            // console.log('----');
-            // console.log(station1, stop1);
-            // console.log(station2, stop2);
             // const segmentLen = this.calcDistBetwPts(station1.coordinates, station2.coordinates);
             // const scaledLen = (curTimeMil * segmentLen) / totalTime; // use time ratio to calc distance traveled
             // TODO this should be distace between two station coordinates
