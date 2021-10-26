@@ -214,9 +214,14 @@ export default {
   flex:5;
 }
 
-@media (max-height: 800px) {
+@media (max-height: 550px) {
   #mapContainer {
-    min-height: 66vh;
+    min-height: 54vh;
+  }
+}
+@media (max-height: 400px) {
+  #mapContainer {
+    min-height: 45vh;
   }
 }
 </style>

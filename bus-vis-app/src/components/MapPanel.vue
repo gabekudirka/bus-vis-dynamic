@@ -206,9 +206,4 @@ export default {
     min-height:vh;
     flex-shrink:0;
 }
-@media (max-height: 800px) {
-  .time-slider {
-    display: none;
-  }
-}
 </style>
