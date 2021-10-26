@@ -82,20 +82,26 @@ export default {
             chargeData.push({ x: '03:00', y: 100 });
             for (let i = 0; i < this.bus.stops.length; i++) {
                 if (i === 0) {
+                    if (this.bus.stops[i].departure_time > '3:00') {
+                        chargeData.push({ x: '3:00', y: Math.max(0, parseInt(this.bus.stops[i].remaining_charge, 10)) });
+                    }
                     chargeData.push({ x: this.bus.stops[i].departure_time, y: Math.max(0, parseInt(this.bus.stops[i].remaining_charge, 10)) });
                 } else {
                     chargeData.push({ x: this.bus.stops[i].arrival_time, y: Math.max(0, parseInt(this.bus.stops[i].remaining_charge, 10)) });
                 }
             }
-            chargeData.push({ x: '23:00', y: Math.max(0, parseInt(this.bus.stops[this.bus.stops.length - 1].remaining_charge, 10)) });
+            const finalTime = this.bus.stops[this.bus.stops.length - 1].arrival_time;
+            chargeData.push({ x: finalTime > '23:00' ? finalTime : '23:00', y: Math.max(0, parseInt(this.bus.stops[this.bus.stops.length - 1].remaining_charge, 10)) });
             return chargeData;
         },
         milesChartData: function () {
             const milesData = [];
             let totalMiles = 0;
-            milesData.push({ x: '03:00', y: totalMiles });
             for (let i = 0; i < this.bus.stops.length; i++) {
                 if (i === 0) {
+                    if (this.bus.stops[i].departure_time > '3:00') {
+                        milesData.push({ x: '3:00', y: totalMiles });
+                    }
                     milesData.push({ x: this.bus.stops[i].departure_time, y: totalMiles });
                 } else {
                     if (this.bus.stops[i].distance_traveled !== 0) {
@@ -104,15 +110,21 @@ export default {
                     milesData.push({ x: this.bus.stops[i].arrival_time, y: totalMiles });
                 }
             }
-            milesData.push({ x: '23:00', y: totalMiles });
+            const finalTime = this.bus.stops[this.bus.stops.length - 1].arrival_time;
+            milesData.push({ x: finalTime > '23:00' ? finalTime : '23:00', y: totalMiles });
             return milesData;
         },
         busStatus: function () {
-            const busob = this.$store.state.busLocations.features.find((bus) => bus.properties.id === this.busId);
-            if (busob.properties.atStation) {
+            if (this.$store.state.busLocations.features.length > 1) {
+                const busob = this.$store.state.busLocations.features.find((bus) => bus.properties.id === this.busId);
+                if (busob.properties.atStation) {
+                    return 'At Stop';
+                } else {
+                    return 'On Route';
+                }
+            } else {
                 return 'At Stop';
             }
-            return 'On Route';
         },
     },
     methods: {

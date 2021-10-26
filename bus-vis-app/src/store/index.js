@@ -14,7 +14,8 @@ export default createStore({
                 type: 'Feature',
                 properties: { 
                     id: -1,
-                    converted: 0
+                    converted: 0,
+                    atStation: true
                 },
                 geometry: {
                     type: 'Point',
