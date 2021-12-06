@@ -17,6 +17,7 @@ import busStops from '../data/BusStops_UTA.json';
 import p20Stations from '../data/stationLocations/p20.json';
 import p60Stations from '../data/stationLocations/p60.json';
 import p180Stations from '../data/stationLocations/p180.json';
+import tazRegions from '../data/TAZ.json';
 
 export default {
   name: 'BusMap',
@@ -152,21 +153,105 @@ export default {
     },
     drawMap() {
       this.map = L.map(this.$refs.mapElement).setView(this.center, 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(this.map);
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      });
+      osmMap.addTo(this.map);
 
-      L.geoJson(busRoutes, { style: this.routeStyle }).addTo(this.map);
+      const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+
+      const routesOverlay = L.geoJson(busRoutes, { style: this.routeStyle });
+      routesOverlay.addTo(this.map);
 
       const busStopStyle = this.busStopStyle;
 
-      L.geoJson(busStops, {
+      const busStopOverlay = L.geoJson(busStops, {
         pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, busStopStyle);
+          return L.circleMarker(latlng, busStopStyle);
         }
-      }).addTo(this.map);
+      });
+      busStopOverlay.addTo(this.map);
+
+      const info = L.control();
+
+      function tazOverlayStyle(feature) {
+        return {
+            fillColor: '#FC4E2A',  
+            weight: 2,
+            opacity: 0.6,
+            color: 'black',
+            dashArray: '3',
+            fillOpacity: 0.3,
+        };
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+      }
+
+      const overlayGeojson = L.geoJson(tazRegions, {
+        style: tazOverlayStyle,
+        onEachFeature: onEachFeature
+      });
+
+      function highlightFeature(e) {
+        const layer = e.target;
+        layer.setStyle({
+            weight: 3,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+
+        info.update(layer.feature.properties);
+      }
+
+      function resetHighlight(e) {
+        overlayGeojson.resetStyle(e.target);
+        info.update();
+      }
+
+      function zoomToFeature(e) {
+        this.map.fitBounds(e.target.getBounds());
+      }
+
+      info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+      };
+
+      info.update = function (props) {
+        this._div.innerHTML = (props ? '<h4>TAZ Code: <b>' + props.N___CO_TAZ + '</b> </h4>' 
+            + 'Area: ' + props.AREA : '');
+      };
+
+      info.addTo(this.map);
+
+      const overlays = {
+        'TAZ Regions': overlayGeojson,
+        'Bus Stops': busStopOverlay,
+        'Bus Routes': routesOverlay,
+      };
+
+      const baseMaps = {
+        'Open Street Maps': osmMap,
+        'Google Sattelite': googleSat,
+      };
+
+      L.control.layers(baseMaps, overlays).addTo(this.map);
     },
     updateBusPositions() {
       let i = 0;
@@ -223,5 +308,24 @@ export default {
   #mapContainer {
     min-height: 45vh;
   }
+}
+#mapContainer >>> .info {  
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+#mapContainer >>> .info h4 {
+  margin: 0 0 5px;
+  color: #777;
+}
+#mapContainer >>> .leaflet-control-layers-base {  
+  text-align: left; 
+}
+
+#mapContainer >>> .leaflet-control-layers-overlays {  
+  text-align: left; 
 }
 </style>
