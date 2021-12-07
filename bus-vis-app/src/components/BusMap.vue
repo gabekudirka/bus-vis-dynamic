@@ -17,7 +17,7 @@ import busStops from '../data/BusStops_UTA.json';
 import p20Stations from '../data/stationLocations/p20.json';
 import p60Stations from '../data/stationLocations/p60.json';
 import p180Stations from '../data/stationLocations/p180.json';
-import tazRegions from '../data/TAZ.json';
+import tazRegions from '../data/TAZ_with_data2.json';
 
 export default {
   name: 'BusMap',
@@ -152,16 +152,18 @@ export default {
        this.busMarkers.addTo(this.map);
     },
     drawMap() {
-      this.map = L.map(this.$refs.mapElement).setView(this.center, 13);
       const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       });
-      osmMap.addTo(this.map);
 
       const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-          maxZoom: 20,
           subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+
+     this.map = L.map(this.$refs.mapElement, {
+        center: this.center,
+        layers: [osmMap, googleSat],
+        zoom: 13,
       });
 
       const routesOverlay = L.geoJson(busRoutes, { style: this.routeStyle });
@@ -178,14 +180,31 @@ export default {
 
       const info = L.control();
 
+      function getColor(bracket1, bracket2, totalHouseholds) {
+        if (totalHouseholds === 0) {
+          return '#fffefa';
+        }
+          
+        const b = parseFloat(bracket1) + parseFloat(bracket2);
+        return b > 70 ? '#800026'
+              : b > 60 ? '#BD0026'
+              : b > 50 ? '#E31A1C'
+              : b > 40 ? '#FC4E2A'
+              : b > 30 ? '#FD8D3C'
+              : b > 20 ? '#FEB24C'
+              : b > 10 ? '#FED976'
+              : b > 0 ? '#FFEDA0'
+              : '#fff7d6';
+      }
+
       function tazOverlayStyle(feature) {
         return {
-            fillColor: '#FC4E2A',  
+            fillColor: getColor(feature.properties.inc_bracket1, feature.properties.inc_bracket2, feature.properties.total_households),  
             weight: 2,
             opacity: 0.6,
             color: 'black',
             dashArray: '3',
-            fillOpacity: 0.3,
+            fillOpacity: 0.5,
         };
       }
 
@@ -235,14 +254,19 @@ export default {
 
       info.update = function (props) {
         this._div.innerHTML = (props ? '<h4>TAZ Code: <b>' + props.N___CO_TAZ + '</b> </h4>' 
-            + 'Area: ' + props.AREA : '');
+            + 'Area: ' + props.AREA
+            + '<br/> Households with income between $0-$34,999: ' + props.inc_bracket1
+            + '%<br/> Households with income between $35,000-$49,999: ' + props.inc_bracket2
+            + '%<br/> Households with income between $50,000-$99,999: ' + props.inc_bracket3
+            + '%<br/> Households with income over $100,000: ' + props.inc_bracket4
+            + '%<br/> Total number of households: ' + props.total_households : '');
       };
 
       info.addTo(this.map);
 
       const overlays = {
-        'TAZ Regions': overlayGeojson,
-        'Bus Stops': busStopOverlay,
+        'Economic Data by Region': overlayGeojson,
+        'Bus Stops': busStopOverlay,  
         'Bus Routes': routesOverlay,
       };
 
@@ -316,6 +340,7 @@ export default {
   background: rgba(255,255,255,0.8);
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   border-radius: 5px;
+  text-align: left;
 }
 #mapContainer >>> .info h4 {
   margin: 0 0 5px;
