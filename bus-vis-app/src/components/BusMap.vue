@@ -17,6 +17,7 @@ import busStops from '../data/BusStops_UTA.json';
 import p20Stations from '../data/stationLocations/p20.json';
 import p60Stations from '../data/stationLocations/p60.json';
 import p180Stations from '../data/stationLocations/p180.json';
+import tazRegions from '../data/TAZ_with_data2.json';
 
 export default {
   name: 'BusMap',
@@ -151,22 +152,130 @@ export default {
        this.busMarkers.addTo(this.map);
     },
     drawMap() {
-      this.map = L.map(this.$refs.mapElement).setView(this.center, 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(this.map);
+      const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      });
 
-      L.geoJson(busRoutes, { style: this.routeStyle }).addTo(this.map);
+      const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+
+     this.map = L.map(this.$refs.mapElement, {
+        center: this.center,
+        layers: [osmMap, googleSat],
+        zoom: 13,
+      });
+
+      const routesOverlay = L.geoJson(busRoutes, { style: this.routeStyle });
+      routesOverlay.addTo(this.map);
 
       const busStopStyle = this.busStopStyle;
 
-      L.geoJson(busStops, {
+      const busStopOverlay = L.geoJson(busStops, {
         pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, busStopStyle);
+          return L.circleMarker(latlng, busStopStyle);
         }
-      }).addTo(this.map);
+      });
+      busStopOverlay.addTo(this.map);
+
+      const info = L.control();
+
+      function getColor(bracket1, bracket2, totalHouseholds) {
+        if (totalHouseholds === 0) {
+          return '#fffefa';
+        }
+          
+        const b = parseFloat(bracket1) + parseFloat(bracket2);
+        return b > 70 ? '#800026'
+              : b > 60 ? '#BD0026'
+              : b > 50 ? '#E31A1C'
+              : b > 40 ? '#FC4E2A'
+              : b > 30 ? '#FD8D3C'
+              : b > 20 ? '#FEB24C'
+              : b > 10 ? '#FED976'
+              : b > 0 ? '#FFEDA0'
+              : '#fff7d6';
+      }
+
+      function tazOverlayStyle(feature) {
+        return {
+            fillColor: getColor(feature.properties.inc_bracket1, feature.properties.inc_bracket2, feature.properties.total_households),  
+            weight: 2,
+            opacity: 0.6,
+            color: 'black',
+            dashArray: '3',
+            fillOpacity: 0.5,
+        };
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+      }
+
+      const overlayGeojson = L.geoJson(tazRegions, {
+        style: tazOverlayStyle,
+        onEachFeature: onEachFeature
+      });
+
+      function highlightFeature(e) {
+        const layer = e.target;
+        layer.setStyle({
+            weight: 3,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+
+        info.update(layer.feature.properties);
+      }
+
+      function resetHighlight(e) {
+        overlayGeojson.resetStyle(e.target);
+        info.update();
+      }
+
+      function zoomToFeature(e) {
+        this.map.fitBounds(e.target.getBounds());
+      }
+
+      info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+      };
+
+      info.update = function (props) {
+        this._div.innerHTML = (props ? '<h4>TAZ Code: <b>' + props.N___CO_TAZ + '</b> </h4>' 
+            + 'Area: ' + props.AREA
+            + '<br/> Households with income between $0-$34,999: ' + props.inc_bracket1
+            + '%<br/> Households with income between $35,000-$49,999: ' + props.inc_bracket2
+            + '%<br/> Households with income between $50,000-$99,999: ' + props.inc_bracket3
+            + '%<br/> Households with income over $100,000: ' + props.inc_bracket4
+            + '%<br/> Total number of households: ' + props.total_households : '');
+      };
+
+      info.addTo(this.map);
+
+      const overlays = {
+        'Economic Data by Region': overlayGeojson,
+        'Bus Stops': busStopOverlay,  
+        'Bus Routes': routesOverlay,
+      };
+
+      const baseMaps = {
+        'Open Street Maps': osmMap,
+        'Google Sattelite': googleSat,
+      };
+
+      L.control.layers(baseMaps, overlays).addTo(this.map);
     },
     updateBusPositions() {
       let i = 0;
@@ -223,5 +332,25 @@ export default {
   #mapContainer {
     min-height: 45vh;
   }
+}
+#mapContainer >>> .info {  
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  text-align: left;
+}
+#mapContainer >>> .info h4 {
+  margin: 0 0 5px;
+  color: #777;
+}
+#mapContainer >>> .leaflet-control-layers-base {  
+  text-align: left; 
+}
+
+#mapContainer >>> .leaflet-control-layers-overlays {  
+  text-align: left; 
 }
 </style>

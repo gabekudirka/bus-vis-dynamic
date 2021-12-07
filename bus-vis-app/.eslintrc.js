@@ -29,6 +29,8 @@ module.exports = {
     'prefer-destructuring': 'off',
     'global-require': 'off',
     'no-underscore-dangle': 'off',
-    'no-else-return': 'off'
+    'no-else-return': 'off',
+    'no-use-before-define': 'off',
+    'no-nested-ternary': 'off',
     },
 };
