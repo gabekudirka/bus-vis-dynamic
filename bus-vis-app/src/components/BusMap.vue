@@ -255,6 +255,8 @@ export default {
               if (ref.selectedRoute === layer._leaflet_id) {
                 ref.selectedRoute = -1;
                 layer.setStyle(unclickedStyle());
+                // if multiple overlapping routes, select and delselct one to push it to the back
+                layer.bringToBack();
                 tooltip.remove();
               } else {
                 const oldLayer = ref.routesOverlay._layers[ref.selectedRoute];
