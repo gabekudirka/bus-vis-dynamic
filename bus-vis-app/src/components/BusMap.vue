@@ -1,7 +1,8 @@
 /* eslint-disable */
 <template>
   <div>
-    <div id="mapContainer" ref="mapElement"></div>
+    <div id="mapContainer" ref="mapElement">
+  </div>
   </div>
 </template>
 
@@ -39,7 +40,9 @@ export default {
         weight: 1,
         opacity: 0.8,
         fillOpacity: 0.8
-      }
+      },
+      selectedBus: -1,
+      selectedRoute: -1,
     };
   },
   computed: {
@@ -62,6 +65,18 @@ export default {
       return L.icon({
         iconUrl: greenBusIcon,
         iconSize: [20, 20],
+      });
+    },
+    blackIconHighlighted: function () {
+      return L.icon({
+        iconUrl: busIcon,
+        iconSize: [30, 30],
+      });
+    },
+    greenIconHighlighted: function () {
+      return L.icon({
+        iconUrl: greenBusIcon,
+        iconSize: [30, 30],
       });
     },
     stationPanelIcon: function () {
@@ -131,10 +146,12 @@ export default {
                            <p>${feature.properties.converted ? 'Converted' : 'Not converted'}</p>`);
         layer.on({
             click: function () {
-              ref.$store.dispatch('changeBus', feature.properties.id);
+              const bus = ref.busLocations.features[layer.bus];
+              ref.$store.dispatch('changeBus', bus.properties.id);
               if (!ref.showBusPanel) {
                 ref.$store.dispatch('changeShowBusses', true);
               }
+              ref.highlightBus(layer, ref);
             }
         });
       }
@@ -149,7 +166,117 @@ export default {
           onEachFeature: onEachFeature
        });
 
+       let i = 0;
+       this.busMarkers.eachLayer((layer) => {
+         layer.bus = i;
+         i++;
+       });
+
        this.busMarkers.addTo(this.map);
+    },
+    highlightBus(layer, ref) {
+      const layerId = layer._leaflet_id;
+      const bus = this.busLocations.features[layer.bus];
+      if (ref.selectedBus === -1) {
+        // if no bus is selected, highlight the bus
+        if (bus.properties.converted) {
+          layer.setIcon(ref.greenIconHighlighted);
+        } else {
+          layer.setIcon(ref.blackIconHighlighted);
+        }
+        ref.selectedBus = layerId;
+      } else {
+        // if a bus is selected, unhighlight the bus
+        const oldLayer = ref.busMarkers._layers[ref.selectedBus];
+        const oldBus = this.busLocations.features[oldLayer.bus];
+        if (oldBus.properties.converted) {
+          oldLayer.setIcon(ref.greenIcon);
+        } else {
+          oldLayer.setIcon(ref.blackIcon);
+        }
+        if (layerId === ref.selectedBus) {
+          // if the selected bus is clicked, unselect it
+          ref.selectedBus = -1;
+        } else {
+          // if another bus is clicked, highlight it
+          if (bus.properties.converted) {
+            layer.setIcon(ref.greenIconHighlighted);
+          } else {
+            layer.setIcon(ref.blackIconHighlighted);
+          }
+          ref.selectedBus = layerId;
+        }
+      }
+    },
+    drawRoutes() {
+      const ref = this;
+
+      function clickedStyle() {
+        return {
+          opacity: 0.8,
+          weight: 4,
+          color: 'red',
+        };
+      }
+      function unclickedStyle() {
+        return {
+          opacity: 0.65,
+          weight: 3,
+          color: 'blue',
+        };
+      }
+      const routeRenderer = L.canvas({ padding: 0.3, tolerance: 7 });
+
+      const tooltip = L.control({ position: 'bottomright' });
+
+      tooltip.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'route-tooltip');
+        return this._div;
+      };
+
+      tooltip.show = function (route) {
+        this._div.innerHTML = (route ? '<p>Bus Route: <b>' + route.properties.LineName + '</b> </p>' : '');
+      };
+
+      tooltip.removeFrom = function () {
+        this._div.innerHTML = '';
+      };
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+          click: function () {
+            if (ref.selectedRoute === -1) {
+              ref.selectedRoute = layer._leaflet_id;
+              layer.setStyle(clickedStyle());
+              layer.bringToFront();
+              tooltip.addTo(ref.map);
+              tooltip.show(layer.feature);
+            } else {
+              if (ref.selectedRoute === layer._leaflet_id) {
+                ref.selectedRoute = -1;
+                layer.setStyle(unclickedStyle());
+                // if multiple overlapping routes, select and delselct one to push it to the back
+                layer.bringToBack();
+                tooltip.remove();
+              } else {
+                const oldLayer = ref.routesOverlay._layers[ref.selectedRoute];
+                oldLayer.setStyle(unclickedStyle());
+                ref.selectedRoute = layer._leaflet_id;
+                layer.setStyle(clickedStyle());
+                layer.bringToFront();
+                tooltip.show(layer.feature);
+              }
+            }
+          }
+        });
+      }
+
+      const routesOverlay = L.geoJson(busRoutes, { 
+        style: unclickedStyle,
+        onEachFeature: onEachFeature,
+        renderer: routeRenderer
+      });
+      return routesOverlay;
     },
     drawMap() {
       const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -164,13 +291,13 @@ export default {
         center: this.center,
         layers: [osmMap, googleSat],
         zoom: 13,
+        doubleClickZoom: false,
       });
 
-      const routesOverlay = L.geoJson(busRoutes, { style: this.routeStyle });
-      routesOverlay.addTo(this.map);
+      this.routesOverlay = this.drawRoutes();
+      this.routesOverlay.addTo(this.map);
 
       const busStopStyle = this.busStopStyle;
-
       const busStopOverlay = L.geoJson(busStops, {
         pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, busStopStyle);
@@ -253,13 +380,19 @@ export default {
       };
 
       info.update = function (props) {
-        this._div.innerHTML = (props ? '<h4>TAZ Code: <b>' + props.N___CO_TAZ + '</b> </h4>' 
+        if (props) {
+          this._div.style.backgroundColor = '#ffffff';
+          this._div.innerHTML = '<h4>TAZ Code: <b>' + props.N___CO_TAZ + '</b> </h4>' 
             + 'Area: ' + props.AREA
             + '<br/> Households with income between $0-$34,999: ' + props.inc_bracket1
             + '%<br/> Households with income between $35,000-$49,999: ' + props.inc_bracket2
             + '%<br/> Households with income between $50,000-$99,999: ' + props.inc_bracket3
             + '%<br/> Households with income over $100,000: ' + props.inc_bracket4
-            + '%<br/> Total number of households: ' + props.total_households : '');
+            + '%<br/> Total number of households: ' + props.total_households;
+        } else {
+          this._div.innerHTML = '';
+          this._div.style.backgroundColor = 'transparent';
+        }
       };
 
       info.addTo(this.map);
@@ -267,7 +400,7 @@ export default {
       const overlays = {
         'Economic Data by Region': overlayGeojson,
         'Bus Stops': busStopOverlay,  
-        'Bus Routes': routesOverlay,
+        'Bus Routes': this.routesOverlay,
       };
 
       const baseMaps = {
@@ -278,9 +411,8 @@ export default {
       L.control.layers(baseMaps, overlays).addTo(this.map);
     },
     updateBusPositions() {
-      let i = 0;
       this.busMarkers.eachLayer((layer) => {
-        const bus = this.busLocations.features[i];
+        const bus = this.busLocations.features[layer.bus];
         layer.bindTooltip(`<p><b>Bus ID:</b> ${bus.properties.id}</p>
                            <p><b>Bus Route:</b> ${bus.properties.route}</p>
                            <p>${bus.properties.converted ? 'Converted' : 'Not converted'}</p>`);
@@ -293,7 +425,6 @@ export default {
         } else {
           layer.setIcon(this.blackIcon);
         }
-        i++;
       });
     },
   },
@@ -336,9 +467,6 @@ export default {
 #mapContainer >>> .info {  
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;
-  background: white;
-  background: rgba(255,255,255,0.8);
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
   border-radius: 5px;
   text-align: left;
 }
@@ -346,6 +474,14 @@ export default {
   margin: 0 0 5px;
   color: #777;
 }
+
+#mapContainer >>> .route-tooltip {  
+  padding: 4px 4px;
+  background: white;
+  border-radius: 5px;
+  text-align: left;
+}
+
 #mapContainer >>> .leaflet-control-layers-base {  
   text-align: left; 
 }

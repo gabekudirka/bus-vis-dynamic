@@ -32,5 +32,7 @@ module.exports = {
     'no-else-return': 'off',
     'no-use-before-define': 'off',
     'no-nested-ternary': 'off',
+    'no-param-reassign': 'off',
+    'no-lonely-if': 'off',
     },
 };
