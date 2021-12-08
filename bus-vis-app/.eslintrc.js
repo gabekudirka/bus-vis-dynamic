@@ -22,6 +22,17 @@ module.exports = {
     'no-plusplus': 'off',
     'no-trailing-spaces': 'off',
     'no-unused-vars': 'off',
-    'no-continue': 'off'
+    'no-continue': 'off',
+    'prefer-template' : 'off',
+    'arrow-parens': 'off',
+    'no-confusing-arrow' : 'off',
+    'prefer-destructuring': 'off',
+    'global-require': 'off',
+    'no-underscore-dangle': 'off',
+    'no-else-return': 'off',
+    'no-use-before-define': 'off',
+    'no-nested-ternary': 'off',
+    'no-param-reassign': 'off',
+    'no-lonely-if': 'off',
     },
 };

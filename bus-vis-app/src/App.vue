@@ -1,13 +1,13 @@
 <template>
   <div id="page">
-    <RoutesList class="left-sidebar"/>
+    <ListContainer class="left-sidebar sidebars" :key="plan" :planBusses="planBusObj" :planObj="planObj"/>
     <div class="main-panel">
-      <div class="top-main bottom-border">
-        <MapPanel class="MAP" :planBusses="planBusses"> </MapPanel>
-        <PlanDetails class="left-border right-sidebar"/>
+      <div class="top-main">
+        <MapPanel class="MAP panel" :planObj="planBusObj"> </MapPanel>
+        <PlanDetails class="right-sidebar panel"/>
       </div>
-      <BusPanel v-if="showBus === true" class="bottom-main"/>
-      <StationPanel v-if="showBus === false" class="bottom-main"/>
+      <BusPanel v-if="showBusses" :key="plan" :planObj="planObj" :planBusObj="planBusObj" class="bottom-main panel"/>
+      <StationPanel v-if="!showBusses" :key="plan" :planObj="planObj" class="bottom-main panel"/>
     </div>
   </div>
 </template>
@@ -17,10 +17,13 @@ import BusPanel from './components/BusPanel.vue';
 import StationPanel from './components/StationPanel.vue';
 import MapPanel from './components/MapPanel.vue';
 import PlanDetails from './components/PlanDetails.vue';
-import RoutesList from './components/RoutesList.vue';
-import p20 from './data/plans/p20.json';
-import p60 from './data/plans/p60.json';
-import p180 from './data/plans/p180.json';
+import ListContainer from './components/ListContainer.vue';
+import p20p from './data/plans/p20.json';
+import p60p from './data/plans/p60.json';
+import p180p from './data/plans/p180.json';
+import p20b from './data/buses/p20.json';
+import p60b from './data/buses/p60.json';
+import p180b from './data/buses/p180.json';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -31,69 +34,106 @@ export default {
     StationPanel,
     MapPanel,
     PlanDetails,
-    RoutesList
-  },
-  data() {
-    return {
-      showBus: true,
-    };
+    ListContainer
   },
   computed: {
-    planBusses: function () {
-        if (this.$store.state.plan === 'p20') {
-            return p20;
-        } if (this.$store.state.plan === 'p60') {
-            return p60;
-        }
-        return p180;
+    plan: function () {
+      return this.$store.state.plan;
     },
-  }
+    showBusses: function () {
+      return this.$store.state.showBusses;
+    },
+    planBusObj: function () {
+        if (this.plan === 'p20') {
+            return p20b;
+        } if (this.plan === 'p60') {
+            return p60b;
+        }
+        return p180b;
+    },
+    planObj: function () {
+      if (this.plan === 'p20') {
+            return p20p;
+        } if (this.plan === 'p60') {
+            return p60p;
+        }
+        return p180p;
+    }
+  },
+  // watch: {
+  //       plan: function () {
+  //         // TODO set charging station to planObj.cs[0] and bus to planBusObj.buses[0]
+  //         console.log(this.planObj.chargingStations[0]);
+  //         this.$store.dispatch('changeStation', this.planObj.chargingStations[0].stop_id);
+  //         console.log(this.planBusObj.buses[0]);
+  //         this.$store.dispatch('changeBus', this.planBusObj.buses[0].id);
+  //       }
+  //   },
 };
 </script>
 
 <style>
+body{
+  background-color: #e8f3f2;
+}
+.sidebars {
+  background-color: #efefef;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  font-size: 11pt;
 }
 #page{
   display:flex;
   flex-direction:row;
-  height: 90vh;
+  height: 100vh;
 }
 .left-sidebar{
+  width:20vw;
   flex:1;
   overflow-y:auto;
   height:100%;
+  position: fixed;
+  z-index:1;
+  top: 0;
+  left: 0;
 }
-
+.panel{
+  background-color: #fff;
+  margin: .25em;
+  padding: .25em;
+  filter: drop-shadow(1px 1px 3px #dfdfdf);
+  border-radius: 5px;
+}
 .main-panel{
   flex:3;
   display:flex;
   flex-direction:column;
+  margin-left: 20vw;
 }
 .top-main{
   flex:4;
   display: flex;
-  height:100%;
+  max-height: 68vh;
 }
 .bottom-main{
   flex:1;
+  max-height: 32vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .right-sidebar{
   flex:1;
-  overflow-y:auto;
-  height:100%;
+  max-width: 15vw; 
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .MAP{
   flex:3;
-}
-.left-border{
-  border-left: 1px solid grey;
 }
 .bottom-border{
   border-bottom: 1px solid grey;

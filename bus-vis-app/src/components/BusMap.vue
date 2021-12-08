@@ -1,96 +1,492 @@
-/* eslint-disable max-len */
+/* eslint-disable */
 <template>
-  <div class="container bottom-panel-box">
-    <div class="row absolute">
-      <div class="col-5 border">
-            Bus ID: {{ bus.id }}
-          <p> Bus Line: {{ bus.line }} </p>
-          <p> Converted: {{ bus.converted }} </p>
-          <p> Bus Status: On Route </p>
-          <p> Last Stop: {{ bus.stops[0].stop_name }} </p>
-          <p> Bus Environmental Impact: {{ bus.environmental_equity }} </p>
-      </div>
-      <div class="col border">Charge level over time</div>
-      <div class="col border">Electricity usage</div>
-    </div>
+  <div>
+    <div id="mapContainer" ref="mapElement">
+  </div>
   </div>
 </template>
 
 <script>
-import p20 from '../data/buses/p20.json';
-import p60 from '../data/buses/p60.json';
-import p180 from '../data/buses/p180.json';
-
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
+import L from 'leaflet';
+import busRoutes from '../data/BusRoutes_UTA.json';
+import greenBusIcon from '../assets/images/busIconGreen.png';
+import busIcon from '../assets/images/busIcon.png';
+import chargingStationIcon from '../assets/images/chargingStation.png';
+import busStops from '../data/BusStops_UTA.json';
+import p20Stations from '../data/stationLocations/p20.json';
+import p60Stations from '../data/stationLocations/p60.json';
+import p180Stations from '../data/stationLocations/p180.json';
+import tazRegions from '../data/TAZ_with_data2.json';
 
 export default {
-    name: 'BusPanel',
-    data() {
-        return {
-            p20,
-            p60,
-            p180,
-        };
+  name: 'BusMap',
+  data() {
+    return {
+      center: [40.7608, -111.891],
+      map: null,
+      busMarkers: null,
+      stationMarkers: null,
+      routeStyle: {
+        color: 'blue',
+        opacity: 0.5,
+        weight: 2,
+      },
+      busStopStyle: {
+        radius: 1,
+        fillColor: 'black',
+        color: '#000',
+        weight: 1,
+        opacity: 0.8,
+        fillOpacity: 0.8
+      },
+      selectedBus: -1,
+      selectedRoute: -1,
+    };
+  },
+  computed: {
+    busLocations: function () {
+      return this.$store.state.busLocations;  
     },
-    computed: {
-        busId: function () {
-            return this.$store.state.selectedBus;
-        },
-        plan: function () {
-            return this.$store.state.plan;
-        },
-        bus: function () {
-            switch (this.$store.state.plan) {
-                case 'p20':
-                    return this.p20Dict[this.busId];
-                case 'p60':
-                    return this.p60Dict[this.busId];
-                case 'p180':
-                    return this.p180Dict[this.busId];
-                default:
-                    return this.p20Dict[this.busId];
-            }
-        },
-        p20Dict: function () {
-            return this.jsonToDict(p20);
-        },
-        p60Dict: function () {
-            return this.jsonToDict(p60);
-        },
-        p180Dict: function () {
-            return this.jsonToDict(p180);
-        },
+    showBusPanel: function () {
+      return this.$store.state.showBusses;
     },
-    methods: {
-        jsonToDict(jsonData) {
-            const buses = {};
-            const busData = jsonData;
-            for (let i = 0; i < busData.buses.length; i++) {
-                const bus = busData.buses[i];
-                buses[bus.id] = bus;
-            }
-            return buses;
-        }
+    plan: function () {
+      return this.$store.state.plan;
+    },
+    blackIcon: function () {
+      return L.icon({
+        iconUrl: busIcon,
+        iconSize: [20, 20],
+      });
+    },
+    greenIcon: function () {
+      return L.icon({
+        iconUrl: greenBusIcon,
+        iconSize: [20, 20],
+      });
+    },
+    blackIconHighlighted: function () {
+      return L.icon({
+        iconUrl: busIcon,
+        iconSize: [30, 30],
+      });
+    },
+    greenIconHighlighted: function () {
+      return L.icon({
+        iconUrl: greenBusIcon,
+        iconSize: [30, 30],
+      });
+    },
+    stationPanelIcon: function () {
+      return L.icon({
+        iconUrl: chargingStationIcon,
+        iconSize: [40, 40],
+        class: 'station'
+      });
     }
-};
+  },
+  watch: {
+    busLocations: function () {
+      if (this.busMarkers != null) {
+        this.updateBusPositions();
+      }
+    },
+    plan: function () {
+      this.stationMarkers.eachLayer((layer) => {
+        this.map.removeLayer(layer);
+      });
 
+      if (this.plan === 'p20') {
+        this.drawStationPanels(p20Stations);
+        this.updateBusPositions();
+      } else if (this.plan === 'p60') {
+        this.drawStationPanels(p60Stations);
+        this.updateBusPositions();
+      } else {
+        this.drawStationPanels(p180Stations);
+        this.updateBusPositions();
+      }
+    }
+  },
+  methods: {
+    drawStationPanels(stationLocations) {
+      const ref = this;
+      function onEachFeature(feature, layer) {
+        layer.setZIndexOffset(-100);
+        layer.setOpacity(0.9);
+        layer.bindTooltip(`<p><b>Station ID: </b> ${feature.properties.stop_id}</p>
+                           <p><b>Stop Name: </b> ${feature.properties.stop_name}</p>
+                           <p><b>Number of stations: </b>${feature.properties.num_stations}</p>`);
+        layer.on({
+            click: function () {
+              ref.$store.dispatch('changeStation', feature.properties.stop_id);
+              if (ref.showBusPanel) {
+                ref.$store.dispatch('changeShowBusses', false);
+              }
+            }
+        });
+      }
+
+      this.stationMarkers = L.geoJson(stationLocations, {
+        pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, { icon: ref.stationPanelIcon });
+        },
+        onEachFeature: onEachFeature
+      });
+
+      this.stationMarkers.addTo(this.map);
+    },
+    drawBuses() {
+      const ref = this;      
+      function onEachFeature(feature, layer) {
+        layer.bindTooltip(`<p><b>Bus ID:</b> ${feature.properties.id}</p>
+                           <p><b>Bus Route:</b> ${feature.properties.route}</p>
+                           <p>${feature.properties.converted ? 'Converted' : 'Not converted'}</p>`);
+        layer.on({
+            click: function () {
+              const bus = ref.busLocations.features[layer.bus];
+              ref.$store.dispatch('changeBus', bus.properties.id);
+              if (!ref.showBusPanel) {
+                ref.$store.dispatch('changeShowBusses', true);
+              }
+              ref.highlightBus(layer, ref);
+            }
+        });
+      }
+
+      this.busMarkers = L.geoJson(this.busLocations, { 
+          pointToLayer: function (feature, latlng) {
+            if (feature.properties.converted) {
+              return L.marker(latlng, { icon: ref.greenIcon });
+            }
+            return L.marker(latlng, { icon: ref.blackIcon });
+          },
+          onEachFeature: onEachFeature
+       });
+
+       let i = 0;
+       this.busMarkers.eachLayer((layer) => {
+         layer.bus = i;
+         i++;
+       });
+
+       this.busMarkers.addTo(this.map);
+    },
+    highlightBus(layer, ref) {
+      const layerId = layer._leaflet_id;
+      const bus = this.busLocations.features[layer.bus];
+      if (ref.selectedBus === -1) {
+        // if no bus is selected, highlight the bus
+        if (bus.properties.converted) {
+          layer.setIcon(ref.greenIconHighlighted);
+        } else {
+          layer.setIcon(ref.blackIconHighlighted);
+        }
+        ref.selectedBus = layerId;
+      } else {
+        // if a bus is selected, unhighlight the bus
+        const oldLayer = ref.busMarkers._layers[ref.selectedBus];
+        const oldBus = this.busLocations.features[oldLayer.bus];
+        if (oldBus.properties.converted) {
+          oldLayer.setIcon(ref.greenIcon);
+        } else {
+          oldLayer.setIcon(ref.blackIcon);
+        }
+        if (layerId === ref.selectedBus) {
+          // if the selected bus is clicked, unselect it
+          ref.selectedBus = -1;
+        } else {
+          // if another bus is clicked, highlight it
+          if (bus.properties.converted) {
+            layer.setIcon(ref.greenIconHighlighted);
+          } else {
+            layer.setIcon(ref.blackIconHighlighted);
+          }
+          ref.selectedBus = layerId;
+        }
+      }
+    },
+    drawRoutes() {
+      const ref = this;
+
+      function clickedStyle() {
+        return {
+          opacity: 0.8,
+          weight: 4,
+          color: 'red',
+        };
+      }
+      function unclickedStyle() {
+        return {
+          opacity: 0.65,
+          weight: 3,
+          color: 'blue',
+        };
+      }
+      const routeRenderer = L.canvas({ padding: 0.3, tolerance: 7 });
+
+      const tooltip = L.control({ position: 'bottomright' });
+
+      tooltip.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'route-tooltip');
+        return this._div;
+      };
+
+      tooltip.show = function (route) {
+        this._div.innerHTML = (route ? '<p>Bus Route: <b>' + route.properties.LineName + '</b> </p>' : '');
+      };
+
+      tooltip.removeFrom = function () {
+        this._div.innerHTML = '';
+      };
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+          click: function () {
+            if (ref.selectedRoute === -1) {
+              ref.selectedRoute = layer._leaflet_id;
+              layer.setStyle(clickedStyle());
+              layer.bringToFront();
+              tooltip.addTo(ref.map);
+              tooltip.show(layer.feature);
+            } else {
+              if (ref.selectedRoute === layer._leaflet_id) {
+                ref.selectedRoute = -1;
+                layer.setStyle(unclickedStyle());
+                // if multiple overlapping routes, select and delselct one to push it to the back
+                layer.bringToBack();
+                tooltip.remove();
+              } else {
+                const oldLayer = ref.routesOverlay._layers[ref.selectedRoute];
+                oldLayer.setStyle(unclickedStyle());
+                ref.selectedRoute = layer._leaflet_id;
+                layer.setStyle(clickedStyle());
+                layer.bringToFront();
+                tooltip.show(layer.feature);
+              }
+            }
+          }
+        });
+      }
+
+      const routesOverlay = L.geoJson(busRoutes, { 
+        style: unclickedStyle,
+        onEachFeature: onEachFeature,
+        renderer: routeRenderer
+      });
+      return routesOverlay;
+    },
+    drawMap() {
+      const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      });
+
+      const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+
+     this.map = L.map(this.$refs.mapElement, {
+        center: this.center,
+        layers: [osmMap, googleSat],
+        zoom: 13,
+        doubleClickZoom: false,
+      });
+
+      this.routesOverlay = this.drawRoutes();
+      this.routesOverlay.addTo(this.map);
+
+      const busStopStyle = this.busStopStyle;
+      const busStopOverlay = L.geoJson(busStops, {
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, busStopStyle);
+        }
+      });
+      busStopOverlay.addTo(this.map);
+
+      const info = L.control();
+
+      function getColor(bracket1, bracket2, totalHouseholds) {
+        if (totalHouseholds === 0) {
+          return '#fffefa';
+        }
+          
+        const b = parseFloat(bracket1) + parseFloat(bracket2);
+        return b > 70 ? '#800026'
+              : b > 60 ? '#BD0026'
+              : b > 50 ? '#E31A1C'
+              : b > 40 ? '#FC4E2A'
+              : b > 30 ? '#FD8D3C'
+              : b > 20 ? '#FEB24C'
+              : b > 10 ? '#FED976'
+              : b > 0 ? '#FFEDA0'
+              : '#fff7d6';
+      }
+
+      function tazOverlayStyle(feature) {
+        return {
+            fillColor: getColor(feature.properties.inc_bracket1, feature.properties.inc_bracket2, feature.properties.total_households),  
+            weight: 2,
+            opacity: 0.6,
+            color: 'black',
+            dashArray: '3',
+            fillOpacity: 0.5,
+        };
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+      }
+
+      const overlayGeojson = L.geoJson(tazRegions, {
+        style: tazOverlayStyle,
+        onEachFeature: onEachFeature
+      });
+
+      function highlightFeature(e) {
+        const layer = e.target;
+        layer.setStyle({
+            weight: 3,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        }
+
+        info.update(layer.feature.properties);
+      }
+
+      function resetHighlight(e) {
+        overlayGeojson.resetStyle(e.target);
+        info.update();
+      }
+
+      function zoomToFeature(e) {
+        this.map.fitBounds(e.target.getBounds());
+      }
+
+      info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+      };
+
+      info.update = function (props) {
+        if (props) {
+          this._div.style.backgroundColor = '#ffffff';
+          this._div.innerHTML = '<h4>TAZ Code: <b>' + props.N___CO_TAZ + '</b> </h4>' 
+            + 'Area: ' + props.AREA
+            + '<br/> Households with income between $0-$34,999: ' + props.inc_bracket1
+            + '%<br/> Households with income between $35,000-$49,999: ' + props.inc_bracket2
+            + '%<br/> Households with income between $50,000-$99,999: ' + props.inc_bracket3
+            + '%<br/> Households with income over $100,000: ' + props.inc_bracket4
+            + '%<br/> Total number of households: ' + props.total_households;
+        } else {
+          this._div.innerHTML = '';
+          this._div.style.backgroundColor = 'transparent';
+        }
+      };
+
+      info.addTo(this.map);
+
+      const overlays = {
+        'Economic Data by Region': overlayGeojson,
+        'Bus Stops': busStopOverlay,  
+        'Bus Routes': this.routesOverlay,
+      };
+
+      const baseMaps = {
+        'Open Street Maps': osmMap,
+        'Google Sattelite': googleSat,
+      };
+
+      L.control.layers(baseMaps, overlays).addTo(this.map);
+    },
+    updateBusPositions() {
+      this.busMarkers.eachLayer((layer) => {
+        const bus = this.busLocations.features[layer.bus];
+        layer.bindTooltip(`<p><b>Bus ID:</b> ${bus.properties.id}</p>
+                           <p><b>Bus Route:</b> ${bus.properties.route}</p>
+                           <p>${bus.properties.converted ? 'Converted' : 'Not converted'}</p>`);
+        const coords = bus.geometry.coordinates;
+        if (layer._latlng.lng !== coords[0] || layer._latlng.lat !== coords[1]) {
+          layer.setLatLng([coords[1], coords[0]]);
+        }
+        if (bus.properties.converted) {
+          layer.setIcon(this.greenIcon);
+        } else {
+          layer.setIcon(this.blackIcon);
+        }
+      });
+    },
+  },
+  mounted() {
+    this.drawMap();
+
+    this.$nextTick(() => {
+      this.drawStationPanels(p20Stations);
+      this.drawBuses();
+    });
+  },
+  beforeUnmount() {
+    if (this.map) {
+      this.map.remove();
+    }
+  },
+};
 </script>
 
-<style>
-div.container {
-  max-width: 80%;
+<style scoped>
+#mapContainer {
+  min-height: 57vh;
+  background-color: #fff;
+  margin: .25em;
+  padding: .25em;
+  filter: drop-shadow(1px 1px 3px #dfdfdf);
+  flex:5;
 }
 
-div.absolute {
-  width: 100%;
-  position: absolute;
-  height: 100%;
+@media (max-height: 550px) {
+  #mapContainer {
+    min-height: 54vh;
+  }
+}
+@media (max-height: 400px) {
+  #mapContainer {
+    min-height: 45vh;
+  }
+}
+#mapContainer >>> .info {  
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  border-radius: 5px;
+  text-align: left;
+}
+#mapContainer >>> .info h4 {
+  margin: 0 0 5px;
+  color: #777;
 }
 
-div.bottom-panel-box {
-  position: fixed;
-  height: 350px;
-  border-top: 3px solid;
-  bottom: 0px;
-  left: 20%;
+#mapContainer >>> .route-tooltip {  
+  padding: 4px 4px;
+  background: white;
+  border-radius: 5px;
+  text-align: left;
+}
+
+#mapContainer >>> .leaflet-control-layers-base {  
+  text-align: left; 
+}
+
+#mapContainer >>> .leaflet-control-layers-overlays {  
+  text-align: left; 
 }
 </style>

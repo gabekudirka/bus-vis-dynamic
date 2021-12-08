@@ -1,72 +1,131 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len prefer-destructuring */
 <template>
     <div class="left-align">
-        <h4>Station: {{selectedStation.stopId}} </h4>
-        <p>Located at: {{selectedStation.stopName}} </p>
-        <p>Busses currently @ station: bus2, bus5, bus8</p>
-        <p>Current station power output: 3000 powers </p>
-        <p>Busses visited station so far: 5/23 </p>
+        <div class="row1">
+            <div class="left-align flex1">
+                <h4>
+                    <i class="fas fa-charging-station"></i>
+                    {{selectedStation.stopName}} 
+                </h4>
+                <div class="sidebyside">
+                    <div class="stationInfo flex1">
+                        <p> <b> UTA Stop: </b> <br> {{selectedStation.stopId}} </p>
+                        <p> <b> Buses at Station: </b> </p>
+                        <p v-for="bus in bussesAtStation" :key="bus" class="busnum">
+                            {{bus}}
+                        </p>
+                        <p> <b> Current Power Output: </b> <br> {{ bussesAtStation.length * powerOutPerBus}} </p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex1">
+                <div v-show="selectedStation.converted" id="charge-chart-container" class="chart">
+                    <p class="chart-title"> <b> Num Buses at Station </b> </p>
+                    <PanelChart
+                        :key="stationChartData"
+                        :data="stationChartData"
+                        :chartName="'stations-chart'"
+                        :containerWidth="chartSize.width"
+                        :containerHeight="chartSize.height"
+                    />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-import p20 from '../data/plans/p20.json';
-import p60 from '../data/plans/p60.json';
-import p180 from '../data/plans/p180.json';
 
+import PanelChart from './PanelChart.vue';
 import stopsList from '../data/allStops.json';
+import busesAtStations from '../data/BusesAtStations.json';
 
 export default {
     name: 'StationPanel',
+    components: {
+        PanelChart,
+    },
+    props: {
+        planObj: {
+            type: Object,
+            required: true
+        }
+    },
+    data() {
+        return {
+            powerOutPerBus: 1, // TODO: figure out number
+            chartSize: {
+                height: 210,
+                width: 400
+            }
+        };
+    },
     computed: {
-        plan: function () {
-            return this.$store.state.plan;
-        },
         stationID: function () {
             return this.$store.state.selectedChargingStation;
         },
         planStations: function () {
-            if (this.plan === 'p20') {
-                console.log(p20.charging_stations);
-                return p20.charging_stations;
-            } if (this.plan === 'p60') {
-                return p60.charging_stations;
-            }
-            return p180.charging_stations;
-        },
-        stations: function () {
-            const list = [];
-            this.planStations.forEach((station) => {
-                const st = stopsList.find((stop) => stop.stopName === station.stop_name);
-                // TODO: use filter?? Multiple stops with same name but diff ids...
-                list.push({ ...station, ...st, converted: true });
-            });
-            console.log(list);
-            return list;
+            return this.planObj.charging_stations;
         },
         selectedStation: function () {
-            // try to find a charging station @ stop
-            let st = this.stations.find((station) => station.stopId === this.stationID);
-            // otherwise just show stop info
-            if (!st) {
-                st = stopsList.find((stop) => stop.stopId === this.stationID);
+            // find the charging station object 
+            let chStation = this.planStations.find((station) => station.stop_id === this.stationID);
+            // if we can't find the station, return the first one of the plan
+            if (!chStation) {
+                chStation = this.planStations[0];
             }
-            console.log('here');
-            console.log(st);
-            return st;
-        }
+            // find the stop
+            const stp = stopsList.find((stop) => stop.stopName === chStation.stop_name);
+            return { ...chStation, ...stp, converted: true };
+        },
+        busLocations: function () {
+            return this.$store.state.busLocations;
+        },
+        bussesAtStation: function () {
+            // find all busses at same locations
+            // busLocations show up as proxy object (figure out why) so we have to check each coordinate seperatesly
+            const busses = this.busLocations.features.filter((bus) => (bus.geometry.coordinates[0] === this.selectedStation.coordinates[0]) 
+                                                            && (bus.geometry.coordinates[1] === this.selectedStation.coordinates[1]));
+            return busses.map((b) => b.properties.id);
+        },
+        // TODO: FINISH
+        stationChartData: function () {
+            const data = busesAtStations[this.selectedStation.stop_name];
+            const stationData = [];
+            Object.keys(data.busTimes).forEach((time) => {
+                stationData.push({ x: time, y: data.busTimes[time].length });
+            });
+            return stationData;
+        },
     },
-
 };
 
 </script>
 
 <style>
-.left-align{
+/* .left-align{
     text-align: left;
     padding:1em;
-}
+} */
 p{
-    margin-bottom:0.5em !important;
+    margin: 0.2em !important;
 }
+.row1{
+    display: flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+}
+.flex1 {
+    flex: 1;
+}
+.busnum {
+    display: inline-block;
+}
+.stationInfo{
+    margin-right:1em;
+}
+.chart{
+    max-width:28vw;
+}
+
 </style>
