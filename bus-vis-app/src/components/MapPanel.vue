@@ -55,14 +55,15 @@ export default {
         this.$store.dispatch('changeBusLocations', busLocs);
     },
     methods: {
-        geoJsonObj(busId, busCoordinates, converted, line, atStation = false) {
+        geoJsonObj(busId, busCoordinates, converted, line, remainingCharge, atStation = false) {
             return { 
                 type: 'Feature',
                 properties: { 
                     id: busId,
                     converted: converted,
                     route: line,
-                    atStation: atStation
+                    atStation: atStation,
+                    remainingCharge: remainingCharge
                 },
                 geometry: {
                     type: 'Point',
@@ -83,20 +84,18 @@ export default {
                     const deptime = (stp.departure_time === '') ? new Date(dtstr + ' 23:59') : new Date(dtstr + ' ' + stp.departure_time);
                     const nextArvtime = (i < bus.stops.length - 1) ? new Date(dtstr + ' ' + bus.stops[i + 1].arrival_time) : new Date(dtstr + ' 00:00');
                     // if (bus.id !== '1000' && bus.id !== '1009') {
-                    //     continue;
+                    //     continue; // FOR DEBUGGING
                     // }
 
                     // if arv <= t <= dpt   -> at stop
                     if (arvtime <= curTime && curTime <= deptime) {
                         const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
-                        // console.log('Here1', stp, stationObj);
                         
-                        // TODO: add atStation if at charging station?
                         if (stationObj) {
-                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line, true));
+                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line, stp.remaining_charge, true));
                             break;
                         } else {
-                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line, true));
+                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line, stp.remaining_charge, true));
                             break;
                         }
                     // if dpt <= t <= next.arv   -> between stops.
@@ -105,10 +104,10 @@ export default {
                         const coords = this.calcBusCoords(stp, bus.stops[i + 1], bus.line);
                         // console.log('Here2', coords, stp);
                         if (coords !== '') {
-                            busLocs.features.push(this.geoJsonObj(bus.id, coords, bus.converted, bus.line));
+                            busLocs.features.push(this.geoJsonObj(bus.id, coords, bus.converted, bus.line, stp.remaining_charge));
                             break;
                         } else {
-                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line));
+                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line, stp.remaining_charge));
                             break;
                         }
                     // t <= arv   -> usually means bus has not left the station for the day        
@@ -116,10 +115,10 @@ export default {
                         // console.log('Here3', stp);
                         const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
                         if (stationObj) {
-                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line));
+                            busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line, stp.remaining_charge));
                             break;
                         } else {
-                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line));
+                            busLocs.features.push(this.geoJsonObj(bus.id, [0, 0], bus.converted, bus.line, stp.remaining_charge));
                             break;
                         }
                     } 
