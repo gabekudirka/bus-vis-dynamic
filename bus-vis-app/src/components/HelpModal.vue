@@ -34,8 +34,8 @@
                     <p><i class="fas fa-bus" style="color:#2a901a"></i> Converted electric buses</p>
                     <p><i class="fas fa-bus" ></i> Non-converted buses</p>
                     <p><i class="fas fa-charging-station" style="color:#2a901a"></i> Electric bus charging stations</p>
+                    <p>Busses, routes, and charging stations are clickable. When a bus or station is selected, information about the bus/station will show up in the bottom panel. A selected route will turn red and the map will show only the buses currently on that route.</p>
                     <p>The layers icon on the right of the map allows users to change the map style and toggle different map features on and off.</p>
-                    <p>Busses, routes, and charging stations are clickable and will select the chosen station or bus in the bottom panel.</p>
                     <p>The time slider beneath the map allows users to move throughout the day to see bus locations change. </p>
                 </div>
             </div>
