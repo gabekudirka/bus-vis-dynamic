@@ -3,9 +3,10 @@
   <div>
     <ul id="busList">
         <li class="header">
+            <input type="checkbox" v-model="allOn" @change="checkAll()" style="margin:0 0.6em"/>
             <div @click="sortBusses('busNo')">Bus No.</div> 
-            <div @click="sortBusses('route')">Route</div> 
-            <div @click="sortBusses('envEquity')">EnvEquity</div> 
+            <div @click="sortBusses('route')">Line</div> 
+            <div @click="sortBusses('envEquity')">Env. Equity</div> 
             <div @click="sortBusses('battery')">Battery</div>
         </li>
         <li v-for="item in planBusses" 
@@ -13,6 +14,7 @@
             :class="[item.id == selectedBus ? 'selected' : '', 'listItem']"
             @click="selectItem(item.id)"
         > 
+            <input type="checkbox" name="check" checked="true" @change="checkOne(item.id)"/>
             <div><i :class="[item.converted? '' : 'hidden', 'fas fa-plug']"></i>{{ item.id }}</div>
             <div>{{item.line}}</div>
             <div>{{item.environmental_equity}}</div>
@@ -40,7 +42,8 @@ export default {
         return {
             // 'converted' || 'envEquity' || 'route' || 'batteryLevel' || 'busNo'
             sortBy: 'converted',
-            planBusses: this.getInitPlanBuses()
+            planBusses: this.getInitPlanBuses(),
+            allOn: true
         };
     },
     computed: {
@@ -55,6 +58,28 @@ export default {
         },
     },
     methods: {
+        checkAll: function () {
+            // toggle show for all busLocations
+            this.busLocations.features.forEach(bus => {
+                bus.properties.show = this.allOn;
+            });
+            // toggle all checkboxes
+            document.getElementsByName('check').forEach(checkbox => {
+                checkbox.checked = this.allOn;
+            });
+            // update the state
+            this.$store.dispatch('changeBusLocations', this.busLocations);
+        },
+        checkOne: function (busId) {
+            // toggle the show property for given busID
+            const bus = this.busLocations.features.find((b) => b.properties.id === busId.toString());
+            bus.properties.show = !bus.properties.show;
+            if (!bus.properties.show) {
+                this.allOn = false;
+            }
+            // update state
+            this.$store.dispatch('changeBusLocations', this.busLocations);
+        },
         getInitPlanBuses: function () {
             const bs = this.planObj;
             const s1 = this.sortByBusNo(bs.buses);
@@ -99,19 +124,6 @@ export default {
         sortByBusNo: function (busList) {
             return busList.sort((a, b) => (a.id > b.id) ? 1 : -1);
         },
-        // sortByConverted: function (busList) {
-        //     return busList.sort((a, b) => (a.converted > b.converted) ? -1 : 1);
-        // },
-        // sortByEnvEquity: function (busList) {
-        //     return busList.sort((a, b) => (a.environmental_equity > b.environmental_equity) ? 1 : -1);
-        // },
-        // sortByBattery: function (busList) {
-        //     //return busList.sort((a, b) => (a.battery_level > b.battery_level) ? 1 : -1);
-        //     return busList.sort((a, b) => (a.converted > b.converted) ? -1 : 1);
-        // },
-        // sortByRoute: function (busList) {
-        //     return busList.sort((a, b) => (a.route > b.route) ? -1 : 1);
-        // },
     }
 };
 
@@ -122,10 +134,19 @@ export default {
     font-size: smaller;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    border-bottom: 2px solid #cdeceb;
+    /* border-top: 2px solid #cdeceb; */
+    /* padding: 0.6em; */
     /* padding: 0 0.6em; */
 }
 .header > div {
     padding: 0 0.6em;
+    height:100%;
+    height: 35px;
+    display: flex;
+    align-items: center;
 }
 .header > div:hover {
     background-color: #cdeceb;
@@ -142,6 +163,7 @@ ul#busList > li:nth-of-type(odd) {
     text-align:left;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 .hidden{
     visibility: hidden;

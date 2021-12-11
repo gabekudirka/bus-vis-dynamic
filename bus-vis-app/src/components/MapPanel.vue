@@ -63,7 +63,8 @@ export default {
                     converted: converted,
                     route: line,
                     atStation: atStation,
-                    remainingCharge: remainingCharge
+                    remainingCharge: remainingCharge,
+                    show: (this.$store.state.busLocations.features.length > 1) ? this.$store.state.busLocations.features.find((bus) => bus.properties.id === busId).properties.show : true
                 },
                 geometry: {
                     type: 'Point',
@@ -99,6 +100,7 @@ export default {
                             break;
                         }
                     // if dpt <= t <= next.arv   -> between stops.
+                    // TODO: This is where we calculate between coordinates
                     } else if (deptime <= curTime && curTime <= nextArvtime) {
                         // calc coords
                         const coords = this.calcBusCoords(stp, bus.stops[i + 1], bus.line);
@@ -167,23 +169,6 @@ export default {
             }
             return '';
         },
-        // // returns true if t1 is >= t2. Only for military time
-        // timeIsGreaterEqTo(t1, t2) {
-        //     const hr1 = parseInt(t1.split(':')[0], 10);
-        //     const hr2 = parseInt(t2.split(':')[0], 10);
-        //     if (hr1 > hr2) {
-        //         return true;
-        //     }
-        //     if (hr2 > hr1) {
-        //         return false;
-        //     } // if equal hours
-        //     const min1 = parseInt(t1.split(':')[1], 10);
-        //     const min2 = parseInt(t2.split(':')[1], 10);
-        //     if (min1 >= min2) { // if they're equal just say true
-        //         return true;
-        //     }
-        //     return false;
-        // }
     }
 
 };
