@@ -31,9 +31,6 @@ export default {
         time: function () {
             return this.$store.state.time;
         },
-        plan: function () {
-            return this.$store.state.plan;
-        },
         // returns array of {busID: ID, coordinates: [lat,long]}
         busLocations: function () { 
             return this.$store.state.busLocations;
@@ -45,7 +42,7 @@ export default {
             const busLocs = this.calcBusLocations();
             this.$store.dispatch('changeBusLocations', busLocs);
         },
-        plan: function () {
+        planObj: function () {
             const busLocs = this.calcBusLocations();
             this.$store.dispatch('changeBusLocations', busLocs);
         }

@@ -8,6 +8,7 @@ export default createStore({
         selectedChargingStation: '7',
         time: '01:40',
         showBusses: true,
+        bussesToShow: [],
         busLocations: {
             type: 'FeatureCollection',
             features: [{

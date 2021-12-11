@@ -34,5 +34,6 @@ module.exports = {
     'no-nested-ternary': 'off',
     'no-param-reassign': 'off',
     'no-lonely-if': 'off',
+    'consistent-return': 'off',
     },
 };

@@ -36,39 +36,39 @@ export default {
     PlanDetails,
     ListContainer
   },
+  data() {
+    return {
+      planObj: p20p,
+      planBusObj: p20b,
+    };
+  },
   computed: {
     plan: function () {
       return this.$store.state.plan;
     },
     showBusses: function () {
       return this.$store.state.showBusses;
-    },
-    planBusObj: function () {
-        if (this.plan === 'p20') {
-            return p20b;
-        } if (this.plan === 'p60') {
-            return p60b;
-        }
-        return p180b;
-    },
-    planObj: function () {
-      if (this.plan === 'p20') {
-            return p20p;
-        } if (this.plan === 'p60') {
-            return p60p;
-        }
-        return p180p;
     }
   },
-  // watch: {
-  //       plan: function () {
-  //         // TODO set charging station to planObj.cs[0] and bus to planBusObj.buses[0]
-  //         console.log(this.planObj.chargingStations[0]);
-  //         this.$store.dispatch('changeStation', this.planObj.chargingStations[0].stop_id);
-  //         console.log(this.planBusObj.buses[0]);
-  //         this.$store.dispatch('changeBus', this.planBusObj.buses[0].id);
-  //       }
-  //   },
+  watch: {
+    plan: function () {
+        if (this.plan === 'p20') {
+            this.planObj = p20p;
+            this.planBusObj = p20b;
+        } if (this.plan === 'p60') {
+            this.planObj = p60p;
+            this.planBusObj = p60b;
+        } if (this.plan === 'p180') {
+            this.planObj = p180p;
+            this.planBusObj = p180b;
+        }
+      },
+      // TODO set charging station to planObj.cs[0] and bus to planBusObj.buses[0]
+      // console.log(this.planObj.chargingStations[0]);
+      // this.$store.dispatch('changeStation', this.planObj.chargingStations[0].stop_id);
+      // console.log(this.planBusObj.buses[0]);
+      // this.$store.dispatch('changeBus', this.planBusObj.buses[0].id);
+  },
 };
 </script>
 

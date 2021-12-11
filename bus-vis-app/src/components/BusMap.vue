@@ -41,6 +41,16 @@ export default {
         opacity: 0.8,
         fillOpacity: 0.8
       },
+      unclickedRouteStyle: {
+        opacity: 0.65,
+        weight: 3,
+        color: 'blue',
+      },
+      clickedRouteStyle: {
+        opacity: 0.8,
+        weight: 4,
+        color: 'red',
+      },
       selectedBus: -1,
       selectedRoute: -1,
     };
@@ -54,6 +64,9 @@ export default {
     },
     plan: function () {
       return this.$store.state.plan;
+    },
+    stateSelectedBus: function () {
+      return this.$store.state.selectedBus;
     },
     blackIcon: function () {
       return L.icon({
@@ -88,10 +101,13 @@ export default {
     }
   },
   watch: {
-    busLocations: function () {
-      if (this.busMarkers != null) {
-        this.updateBusPositions();
-      }
+    busLocations: {
+      handler: function () {
+        if (this.busMarkers != null) {
+          this.updateBusPositions();
+        }
+      },
+      deep: true
     },
     plan: function () {
       this.stationMarkers.eachLayer((layer) => {
@@ -100,13 +116,23 @@ export default {
 
       if (this.plan === 'p20') {
         this.drawStationPanels(p20Stations);
-        this.updateBusPositions();
       } else if (this.plan === 'p60') {
         this.drawStationPanels(p60Stations);
-        this.updateBusPositions();
       } else {
         this.drawStationPanels(p180Stations);
-        this.updateBusPositions();
+      }
+    },
+    stateSelectedBus: function () {
+      if (this.busMarkers != null) {
+        let selectedLayer = null;
+        this.busMarkers.eachLayer((layer) => {
+          if (this.busLocations.features[layer.bus].properties.id === this.stateSelectedBus) {
+            selectedLayer = layer;
+          }
+        });
+        if (selectedLayer != null) {
+          this.highlightBus(selectedLayer, this);
+        }
       }
     }
   },
@@ -128,7 +154,6 @@ export default {
             }
         });
       }
-
       this.stationMarkers = L.geoJson(stationLocations, {
         pointToLayer: function (feature, latlng) {
             return L.marker(latlng, { icon: ref.stationPanelIcon });
@@ -147,15 +172,17 @@ export default {
         layer.on({
             click: function () {
               const bus = ref.busLocations.features[layer.bus];
-              ref.$store.dispatch('changeBus', bus.properties.id);
+              if (ref.stateSelectedBus === bus.properties.id) {
+                ref.highlightBus(layer, ref);
+              } else {
+                ref.$store.dispatch('changeBus', bus.properties.id);
+              }
               if (!ref.showBusPanel) {
                 ref.$store.dispatch('changeShowBusses', true);
               }
-              ref.highlightBus(layer, ref);
             }
         });
       }
-
       this.busMarkers = L.geoJson(this.busLocations, { 
           pointToLayer: function (feature, latlng) {
             if (feature.properties.converted) {
@@ -163,7 +190,7 @@ export default {
             }
             return L.marker(latlng, { icon: ref.blackIcon });
           },
-          onEachFeature: onEachFeature
+          onEachFeature: onEachFeature,
        });
 
        let i = 0;
@@ -174,70 +201,58 @@ export default {
 
        this.busMarkers.addTo(this.map);
     },
-    highlightBus(layer, ref) {
+    highlightBus(layer) {
       const layerId = layer._leaflet_id;
       const bus = this.busLocations.features[layer.bus];
-      if (ref.selectedBus === -1) {
+      if (this.selectedBus === -1) {
         // if no bus is selected, highlight the bus
-        if (bus.properties.converted) {
-          layer.setIcon(ref.greenIconHighlighted);
-        } else {
-          layer.setIcon(ref.blackIconHighlighted);
-        }
-        ref.selectedBus = layerId;
+        this.highlightBusHelper(layer, bus.properties.converted);
+        this.selectedBus = layerId;
       } else {
         // if a bus is selected, unhighlight the bus
-        const oldLayer = ref.busMarkers._layers[ref.selectedBus];
+        const oldLayer = this.busMarkers._layers[this.selectedBus];
         const oldBus = this.busLocations.features[oldLayer.bus];
         if (oldBus.properties.converted) {
-          oldLayer.setIcon(ref.greenIcon);
+          oldLayer.setIcon(this.greenIcon);
+          layer.setZIndexOffset(-50);
         } else {
-          oldLayer.setIcon(ref.blackIcon);
+          oldLayer.setIcon(this.blackIcon);
+          layer.setZIndexOffset(-50);
         }
-        if (layerId === ref.selectedBus) {
+        if (layerId === this.selectedBus) {
           // if the selected bus is clicked, unselect it
-          ref.selectedBus = -1;
+          this.selectedBus = -1;
         } else {
           // if another bus is clicked, highlight it
-          if (bus.properties.converted) {
-            layer.setIcon(ref.greenIconHighlighted);
-          } else {
-            layer.setIcon(ref.blackIconHighlighted);
-          }
-          ref.selectedBus = layerId;
+          this.highlightBusHelper(layer, bus.properties.converted);
+          this.selectedBus = layerId;
         }
+      }
+    },
+    highlightBusHelper(layer, converted) {
+      if (converted) {
+        layer.setIcon(this.greenIconHighlighted); 
+      } else {
+        layer.setIcon(this.blackIconHighlighted);
+      }
+      layer.setZIndexOffset(50);
+      if (!this.map.getBounds().contains(layer.getLatLng())) {
+        this.map.panTo(layer.getLatLng());
       }
     },
     drawRoutes() {
       const ref = this;
 
-      function clickedStyle() {
-        return {
-          opacity: 0.8,
-          weight: 4,
-          color: 'red',
-        };
-      }
-      function unclickedStyle() {
-        return {
-          opacity: 0.65,
-          weight: 3,
-          color: 'blue',
-        };
-      }
       const routeRenderer = L.canvas({ padding: 0.3, tolerance: 7 });
 
       const tooltip = L.control({ position: 'bottomright' });
-
       tooltip.onAdd = function (map) {
         this._div = L.DomUtil.create('div', 'route-tooltip');
         return this._div;
       };
-
       tooltip.show = function (route) {
         this._div.innerHTML = (route ? '<p>Bus Route: <b>' + route.properties.LineName + '</b> </p>' : '');
       };
-
       tooltip.removeFrom = function () {
         this._div.innerHTML = '';
       };
@@ -245,38 +260,66 @@ export default {
       function onEachFeature(feature, layer) {
         layer.on({
           click: function () {
-            if (ref.selectedRoute === -1) {
-              ref.selectedRoute = layer._leaflet_id;
-              layer.setStyle(clickedStyle());
-              layer.bringToFront();
-              tooltip.addTo(ref.map);
-              tooltip.show(layer.feature);
-            } else {
-              if (ref.selectedRoute === layer._leaflet_id) {
-                ref.selectedRoute = -1;
-                layer.setStyle(unclickedStyle());
-                // if multiple overlapping routes, select and delselct one to push it to the back
-                layer.bringToBack();
-                tooltip.remove();
-              } else {
-                const oldLayer = ref.routesOverlay._layers[ref.selectedRoute];
-                oldLayer.setStyle(unclickedStyle());
-                ref.selectedRoute = layer._leaflet_id;
-                layer.setStyle(clickedStyle());
-                layer.bringToFront();
-                tooltip.show(layer.feature);
-              }
+            ref.showAllBuses();
+            ref.highlightRoute(layer, tooltip);
+          },
+          contextmenu: function () {
+            // const popup = L.popup().setContent('<p>Hello world!<br />This is a nice popup.</p>'); 
+            // ref.map.openPopup(popup);
+            ref.showAllBuses();
+            if (ref.selectedRoute !== layer._leaflet_id) {
+              ref.highlightRoute(layer, tooltip);
             }
-          }
+            ref.hideBusesOffRoute(layer);
+            layer.bringToFront();
+          },
         });
       }
-
       const routesOverlay = L.geoJson(busRoutes, { 
-        style: unclickedStyle,
+        style: this.unclickedRouteStyle,  
         onEachFeature: onEachFeature,
         renderer: routeRenderer
       });
       return routesOverlay;
+    },
+    highlightRoute(layer, tooltip) {
+      if (this.selectedRoute === -1) {
+        this.selectedRoute = layer._leaflet_id;
+        layer.setStyle(this.clickedRouteStyle);
+        layer.bringToFront();
+        tooltip.addTo(this.map);
+        tooltip.show(layer.feature);
+      } else {
+        if (this.selectedRoute === layer._leaflet_id) {
+          this.selectedRoute = -1;
+          layer.setStyle(this.unclickedRouteStyle);
+          // if multiple overlapping routes, select and delselct one to push it to the back
+          layer.bringToBack();
+          tooltip.remove();
+        } else {
+          const oldLayer = this.routesOverlay._layers[this.selectedRoute];
+          oldLayer.setStyle(this.unclickedRouteStyle);
+          this.selectedRoute = layer._leaflet_id;
+          layer.setStyle(this.clickedRouteStyle);
+          layer.bringToFront();
+          tooltip.show(layer.feature);
+        }
+      }
+    },
+    showAllBuses() {
+      this.busLocations.features.map(bus => {
+          bus.properties.show = true;
+          return bus;
+        });
+    },
+    hideBusesOffRoute(layer) {
+      // Get the buses not on the route
+      const otherBuses = this.busLocations.features.filter(bus => bus.properties.route !== layer.feature.properties.LineAbbr);
+
+      otherBuses.map(bus => {
+          bus.properties.show = false;
+          return bus;
+        });
     },
     drawMap() {
       const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -413,17 +456,24 @@ export default {
     updateBusPositions() {
       this.busMarkers.eachLayer((layer) => {
         const bus = this.busLocations.features[layer.bus];
-        layer.bindTooltip(`<p><b>Bus ID:</b> ${bus.properties.id}</p>
+        if (!bus.properties.show && this.map.hasLayer(layer)) {
+          this.map.removeLayer(layer);
+        } else if (bus.properties.show) {
+          if (!this.map.hasLayer(layer)) {
+            this.map.addLayer(layer);
+          }
+          layer.bindTooltip(`<p><b>Bus ID:</b> ${bus.properties.id}</p>
                            <p><b>Bus Route:</b> ${bus.properties.route}</p>
                            <p>${bus.properties.converted ? 'Converted' : 'Not converted'}</p>`);
-        const coords = bus.geometry.coordinates;
-        if (layer._latlng.lng !== coords[0] || layer._latlng.lat !== coords[1]) {
-          layer.setLatLng([coords[1], coords[0]]);
-        }
-        if (bus.properties.converted) {
-          layer.setIcon(this.greenIcon);
-        } else {
-          layer.setIcon(this.blackIcon);
+          const coords = bus.geometry.coordinates;
+          if (layer._latlng.lng !== coords[0] || layer._latlng.lat !== coords[1]) {
+            layer.setLatLng([coords[1], coords[0]]);
+          }
+          if (bus.properties.converted) {
+            layer.setIcon(this.greenIcon);
+          } else {
+            layer.setIcon(this.blackIcon);
+          }
         }
       });
     },
