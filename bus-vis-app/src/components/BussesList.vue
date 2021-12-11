@@ -42,7 +42,7 @@ export default {
         return {
             // 'converted' || 'envEquity' || 'route' || 'batteryLevel' || 'busNo'
             sortBy: 'converted',
-            planBusses: this.getInitPlanBuses(),
+            planBusses: this.getPlanBuses(),
             allOn: true
         };
     },
@@ -55,6 +55,14 @@ export default {
         },
         selectedBus: function () {
             return this.$store.state.selectedBus;
+        },
+        bussesToShow: function () {
+            return this.$store.state.bussesToShow;
+        },
+    },
+    watch: {
+        bussesToShow: function () {
+            this.planBusses = this.getPlanBuses();
         },
     },
     methods: {
@@ -80,9 +88,15 @@ export default {
             // update state
             this.$store.dispatch('changeBusLocations', this.busLocations);
         },
-        getInitPlanBuses: function () {
-            const bs = this.planObj;
-            const s1 = this.sortByBusNo(bs.buses);
+        getPlanBuses: function () {
+            let bs = this.planObj.buses;
+            if (this.bussesToShow != null) {
+                bs = [];
+                this.bussesToShow.forEach(busId => {
+                    bs.push(this.planObj.buses.find(bus => bus.id === busId));
+                });
+            }
+            const s1 = this.sortByBusNo(bs);
             return s1.sort((a, b) => (a.converted > b.converted) ? -1 : 1);
         },
         selectItem: function (busId) {

@@ -8,7 +8,7 @@ export default createStore({
         selectedChargingStation: '7',
         time: '01:40',
         showBusses: true,
-        bussesToShow: [],
+        bussesToShow: null,
         busLocations: {
             type: 'FeatureCollection',
             features: [{
@@ -50,6 +50,9 @@ export default createStore({
         CHANGE_BUS_LOCATIONS(state, busLocations) {
             state.busLocations = busLocations;
         },
+        CHANGE_BUSESS_TO_SHOW(state, bussesToShow) {
+            state.bussesToShow = bussesToShow;
+        },
     },
     actions: {
         changePlan({ commit }, payload) {
@@ -73,6 +76,8 @@ export default createStore({
         changeBusLocations({ commit }, payload) {
             commit('CHANGE_BUS_LOCATIONS', payload);
         },
-
+        changeBussesToShow({ commit }, payload) {
+            commit('CHANGE_BUSESS_TO_SHOW', payload);
+        },
     }
   });

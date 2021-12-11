@@ -307,19 +307,26 @@ export default {
       }
     },
     showAllBuses() {
+      const allBuses = [];
       this.busLocations.features.map(bus => {
           bus.properties.show = true;
+          allBuses.push(bus.properties.id);
           return bus;
-        });
+      });
+
+      this.$store.dispatch('changeBussesToShow', allBuses);
     },
     hideBusesOffRoute(layer) {
       // Get the buses not on the route
       const otherBuses = this.busLocations.features.filter(bus => bus.properties.route !== layer.feature.properties.LineAbbr);
+      const routeBuses = this.busLocations.features.filter(bus => bus.properties.route === layer.feature.properties.LineAbbr);
 
       otherBuses.map(bus => {
           bus.properties.show = false;
           return bus;
-        });
+      });
+
+      this.$store.dispatch('changeBussesToShow', routeBuses.map(bus => bus.properties.id));
     },
     drawMap() {
       const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
