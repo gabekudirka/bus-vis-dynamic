@@ -263,8 +263,12 @@ export default {
             ref.showAllBuses();
             ref.highlightRoute(layer, tooltip);
           },
-          contextmenu: function () {
-            // const popup = L.popup().setContent('<p>Hello world!<br />This is a nice popup.</p>'); 
+          contextmenu: function (e) {
+            // const popup = L.popup()
+            //   .setContent('<p>Hello world!<br />This is a nice popup.</p>')
+            //   .setLatLng(e.latlng)
+            //   .addTo(ref.map)
+            //   .openOn(ref.map);
             // ref.map.openPopup(popup);
             ref.showAllBuses();
             if (ref.selectedRoute !== layer._leaflet_id) {
