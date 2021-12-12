@@ -53,6 +53,8 @@ export default {
       },
       selectedBus: -1,
       selectedRoute: -1,
+      hoveredRoute: -1,
+      routeFocused: false,
     };
   },
   computed: {
@@ -214,10 +216,10 @@ export default {
         const oldBus = this.busLocations.features[oldLayer.bus];
         if (oldBus.properties.converted) {
           oldLayer.setIcon(this.greenIcon);
-          layer.setZIndexOffset(-50);
+          oldLayer.setZIndexOffset(-50);
         } else {
           oldLayer.setIcon(this.blackIcon);
-          layer.setZIndexOffset(-50);
+          oldLayer.setZIndexOffset(-50);
         }
         if (layerId === this.selectedBus) {
           // if the selected bus is clicked, unselect it
@@ -256,27 +258,47 @@ export default {
       tooltip.removeFrom = function () {
         this._div.innerHTML = '';
       };
+      tooltip.addTo(ref.map);
 
       function onEachFeature(feature, layer) {
+        let isClicked = false;
         layer.on({
           click: function () {
             ref.showAllBuses();
             ref.highlightRoute(layer, tooltip);
-          },
-          contextmenu: function (e) {
-            // const popup = L.popup()
-            //   .setContent('<p>Hello world!<br />This is a nice popup.</p>')
-            //   .setLatLng(e.latlng)
-            //   .addTo(ref.map)
-            //   .openOn(ref.map);
-            // ref.map.openPopup(popup);
-            ref.showAllBuses();
-            if (ref.selectedRoute !== layer._leaflet_id) {
-              ref.highlightRoute(layer, tooltip);
-            }
-            ref.hideBusesOffRoute(layer);
             layer.bringToFront();
           },
+          contextmenu: function (e) {
+            if (!ref.routeFocused) {
+              if (!isClicked) {
+                layer.bringToBack();
+                layer.fire('mouseover');
+                tooltip.show(layer.feature);
+                isClicked = true;
+              } else {
+                layer.bringToBack();
+                layer.fire('mouseout');
+                tooltip.removeFrom();
+                isClicked = false;
+              }
+            }
+          },
+          mouseover: function () {
+            if (!ref.routeFocused) {
+              tooltip.show(layer.feature);
+              layer.setStyle({
+                opacity: 0.65,
+                weight: 4,
+                color: '#ff4278',
+              });
+              layer.bringToFront();
+            } 
+          },
+          mouseout: function () {
+            if (!ref.routeFocused) {
+              layer.setStyle(ref.unclickedRouteStyle);
+            } 
+          }
         });
       }
       const routesOverlay = L.geoJson(busRoutes, { 
@@ -291,15 +313,16 @@ export default {
         this.selectedRoute = layer._leaflet_id;
         layer.setStyle(this.clickedRouteStyle);
         layer.bringToFront();
-        tooltip.addTo(this.map);
         tooltip.show(layer.feature);
+        this.hideBusesOffRoute(layer);
+        this.routeFocused = true;
       } else {
         if (this.selectedRoute === layer._leaflet_id) {
           this.selectedRoute = -1;
           layer.setStyle(this.unclickedRouteStyle);
           // if multiple overlapping routes, select and delselct one to push it to the back
-          layer.bringToBack();
-          tooltip.remove();
+          this.showAllBuses(); 
+          this.routeFocused = false;
         } else {
           const oldLayer = this.routesOverlay._layers[this.selectedRoute];
           oldLayer.setStyle(this.unclickedRouteStyle);
@@ -307,6 +330,8 @@ export default {
           layer.setStyle(this.clickedRouteStyle);
           layer.bringToFront();
           tooltip.show(layer.feature);
+          this.showAllBuses();
+          this.hideBusesOffRoute(layer);
         }
       }
     },
