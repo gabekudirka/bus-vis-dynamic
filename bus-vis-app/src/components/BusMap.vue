@@ -18,7 +18,8 @@ import busStops from '../data/BusStops_UTA.json';
 import p20Stations from '../data/stationLocations/p20.json';
 import p60Stations from '../data/stationLocations/p60.json';
 import p180Stations from '../data/stationLocations/p180.json';
-import tazRegions from '../data/TAZ_with_data2.json';
+import tazRegions from '../data/supplementary_data/TAZ_with_data2.json';
+import pollutantConcentrations from '../data/supplementary_data/pollutant_concentrations.json';
 
 export default {
   name: 'BusMap',
@@ -384,9 +385,29 @@ export default {
       });
       busStopOverlay.addTo(this.map);
 
-      const info = L.control();
+      const pollutantConcentrationOverlay = L.geoJson(pollutantConcentrations);
 
-      function getColor(bracket1, bracket2, totalHouseholds) {
+      const overlayGeojson = this.drawTazOverlay();
+
+      const overlays = {
+        'Economic Data by Region': overlayGeojson,
+        'Pollutant Concentrations': pollutantConcentrationOverlay,
+        'Bus Stops': busStopOverlay,  
+        'Bus Routes': this.routesOverlay,
+      };
+
+      const baseMaps = {
+        'Open Street Maps': osmMap,
+        'Google Sattelite': googleSat,
+      };
+
+      L.control.layers(baseMaps, overlays).addTo(this.map);
+    },
+    drawTazOverlay() {
+      const ref = this;
+      const info = L.control({ position: 'bottomleft' });
+
+      function getColor(bracket1, bracket2 = 0, totalHouseholds = 1) {
         if (totalHouseholds === 0) {
           return '#fffefa';
         }
@@ -418,7 +439,7 @@ export default {
         layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
-            click: zoomToFeature
+            click: displayTazInfo
         });
       }
 
@@ -439,55 +460,69 @@ export default {
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
         }
-
-        info.update(layer.feature.properties);
+        info.show(layer.feature.properties);
       }
 
       function resetHighlight(e) {
         overlayGeojson.resetStyle(e.target);
-        info.update();
+        info.hide();
       }
 
-      function zoomToFeature(e) {
-        this.map.fitBounds(e.target.getBounds());
+      function displayTazInfo(props) {
+        info._div.innerHTML = '<p>TAZ ID: <b>' + props.target.feature.properties.N___CO_TAZ + '</b> </p>'
+            + '<i>Households making:</i>'
+            + '<br/> $0-$34k per year: &nbsp&nbsp&nbsp&nbsp<b>' + props.target.feature.properties.inc_bracket1
+            + '%</b><br/> $35k-$50k per year: <b>' + props.target.feature.properties.inc_bracket2
+            + '%</b><br/> $50k-$99k per year: <b>' + props.target.feature.properties.inc_bracket3
+            + '%</b><br/> $100k+ per year: &nbsp&nbsp&nbsp&nbsp&nbsp<b>' + props.target.feature.properties.inc_bracket4
+            + '%</b><br/> Total number of households: <b>' + props.target.feature.properties.total_households + '</b>';
       }
 
       info.onAdd = function (map) {
         this._div = L.DomUtil.create('div', 'info');
-        this.update();
         return this._div;
       };
+      info.show = function (props) {
+        this._div.innerHTML = '<p>TAZ ID: <b>' + props.N___CO_TAZ + '</b> </p>';
+            // + 'Households in income bracket 1: ' + props.inc_bracket1
+            // + '%<br/> Households in income bracket 2: ' + props.inc_bracket2
+            // + '%<br/> Households in income bracket 3: ' + props.inc_bracket3
+            // + '%<br/> Households in income bracket 4: ' + props.inc_bracket4
+            // + '%<br/> Total number of households: ' + props.total_households
+            // : 'Hover over a region');
+      };
+      info.hide = function () {
+        this._div.innerHTML = '';
+      };
 
-      info.update = function (props) {
-        if (props) {
-          this._div.style.backgroundColor = '#ffffff';
-          this._div.innerHTML = '<h4>TAZ Code: <b>' + props.N___CO_TAZ + '</b> </h4>' 
-            + 'Area: ' + props.AREA
-            + '<br/> Households with income between $0-$34,999: ' + props.inc_bracket1
-            + '%<br/> Households with income between $35,000-$49,999: ' + props.inc_bracket2
-            + '%<br/> Households with income between $50,000-$99,999: ' + props.inc_bracket3
-            + '%<br/> Households with income over $100,000: ' + props.inc_bracket4
-            + '%<br/> Total number of households: ' + props.total_households;
-        } else {
-          this._div.innerHTML = '';
-          this._div.style.backgroundColor = 'transparent';
+      const legend = L.control({ position: 'bottomleft' });
+      legend.onAdd = function (map) {
+          const div = L.DomUtil.create('div', 'info legend');
+              const grades = [0, 10, 20, 30, 40, 50, 60, 70]; 
+              const labels = [];
+
+          div.innerHTML = '<p><b>Households making </br> less than $50,000</b></p>';
+          for (let i = 0; i < grades.length; i++) {
+              div.innerHTML += '<i style="background:' + getColor(grades[i] + 1) + '"></i> '
+                  + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '%<br>' : '%+');
+          }
+          return div;
+      };
+
+      this.map.on('overlayadd', (e) => {
+        if (e.name === 'Economic Data by Region') {
+          legend.addTo(ref.map);
+          info.addTo(ref.map);
         }
-      };
+      });
+      this.map.on('overlayremove', (e) => {
+        if (e.name === 'Economic Data by Region') {
+          legend.removeFrom(ref.map);
+          info.removeFrom(ref.map);
+        }
+      });
 
-      info.addTo(this.map);
-
-      const overlays = {
-        'Economic Data by Region': overlayGeojson,
-        'Bus Stops': busStopOverlay,  
-        'Bus Routes': this.routesOverlay,
-      };
-
-      const baseMaps = {
-        'Open Street Maps': osmMap,
-        'Google Sattelite': googleSat,
-      };
-
-      L.control.layers(baseMaps, overlays).addTo(this.map);
+      return overlayGeojson;
     },
     updateBusPositions() {
       this.busMarkers.eachLayer((layer) => {
@@ -555,8 +590,9 @@ export default {
   font: 14px/16px Arial, Helvetica, sans-serif;
   border-radius: 5px;
   text-align: left;
+  background: #fff;
 }
-#mapContainer >>> .info h4 {
+#mapContainer >>> .info h2 {
   margin: 0 0 5px;
   color: #777;
 }
@@ -574,5 +610,19 @@ export default {
 
 #mapContainer >>> .leaflet-control-layers-overlays {  
   text-align: left; 
+}
+
+#mapContainer >>> .legend {
+    line-height: 18px;
+    color: #555;
+    background: #fff;
+}
+
+#mapContainer >>> .legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
 }
 </style>
