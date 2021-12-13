@@ -55,7 +55,6 @@ export default {
       selectedBus: -1,
       selectedRoute: -1,
       hoveredRoute: -1,
-      routeFocused: false,
     };
   },
   computed: {
@@ -70,6 +69,9 @@ export default {
     },
     stateSelectedBus: function () {
       return this.$store.state.selectedBus;
+    },
+    routeFocused: function () {
+      return this.$store.state.routeFocused;
     },
     blackIcon: function () {
       return L.icon({
@@ -254,7 +256,7 @@ export default {
         return this._div;
       };
       tooltip.show = function (route) {
-        this._div.innerHTML = (route ? '<p>Bus Route: <b>' + route.properties.LineName + '</b> </p>' : '');
+        this._div.innerHTML = (route ? `<p>Bus Route: <b>${route.properties.LineAbbr} - ${route.properties.LineName} </b> </p>` : '');
       };
       tooltip.removeFrom = function () {
         this._div.innerHTML = '';
@@ -273,14 +275,12 @@ export default {
             if (!ref.routeFocused) {
               if (!isClicked) {
                 layer.bringToBack();
-                layer.fire('mouseover');
-                tooltip.show(layer.feature);
-                isClicked = true;
-              } else {
-                layer.bringToBack();
                 layer.fire('mouseout');
                 tooltip.removeFrom();
-                isClicked = false;
+              } else {
+                layer.bringToBack();
+                layer.fire('mouseover');
+                tooltip.show(layer.feature);
               }
             }
           },
@@ -293,12 +293,14 @@ export default {
                 color: '#ff4278',
               });
               layer.bringToFront();
+              isClicked = false;
             } 
           },
           mouseout: function () {
             if (!ref.routeFocused) {
               layer.setStyle(ref.unclickedRouteStyle);
-            } 
+              isClicked = true;
+            }
           }
         });
       }
@@ -316,14 +318,14 @@ export default {
         layer.bringToFront();
         tooltip.show(layer.feature);
         this.hideBusesOffRoute(layer);
-        this.routeFocused = true;
+        this.$store.dispatch('changeRouteFocused', true);
       } else {
         if (this.selectedRoute === layer._leaflet_id) {
           this.selectedRoute = -1;
           layer.setStyle(this.unclickedRouteStyle);
           // if multiple overlapping routes, select and delselct one to push it to the back
           this.showAllBuses(); 
-          this.routeFocused = false;
+          this.$store.dispatch('changeRouteFocused', false);
         } else {
           const oldLayer = this.routesOverlay._layers[this.selectedRoute];
           oldLayer.setStyle(this.unclickedRouteStyle);
@@ -517,8 +519,8 @@ export default {
       });
       this.map.on('overlayremove', (e) => {
         if (e.name === 'Economic Data by Region') {
-          legend.removeFrom(ref.map);
-          info.removeFrom(ref.map);
+          legend.remove();
+          info.remove();
         }
       });
 

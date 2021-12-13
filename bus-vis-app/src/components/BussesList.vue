@@ -59,6 +59,9 @@ export default {
         bussesToShow: function () {
             return this.$store.state.bussesToShow;
         },
+        routeFocused: function () {
+            return this.$store.state.routeFocused;
+        }
     },
     watch: {
         bussesToShow: function () {
@@ -68,9 +71,18 @@ export default {
     methods: {
         checkAll: function () {
             // toggle show for all busLocations
-            this.busLocations.features.forEach(bus => {
-                bus.properties.show = this.allOn;
-            });
+            if (this.routeFocused) {
+                this.busLocations.features.forEach(bus => {
+                    if (this.bussesToShow.includes(bus.properties.id)) {
+                        bus.properties.show = this.allOn;
+                    }
+                });
+            } else {
+                this.busLocations.features.forEach(bus => {
+                    bus.properties.show = this.allOn;
+                });
+            }
+            
             // toggle all checkboxes
             document.getElementsByName('check').forEach(checkbox => {
                 checkbox.checked = this.allOn;

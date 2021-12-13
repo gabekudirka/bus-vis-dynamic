@@ -8,6 +8,7 @@ export default createStore({
         selectedChargingStation: '7',
         time: '01:40',
         showBusses: true,
+        routeFocused: false,
         bussesToShow: null,
         busLocations: {
             type: 'FeatureCollection',
@@ -53,6 +54,9 @@ export default createStore({
         CHANGE_BUSESS_TO_SHOW(state, bussesToShow) {
             state.bussesToShow = bussesToShow;
         },
+        CHANGE_ROUTE_FOCUSED(state, routeFocused) {
+            state.routeFocused = routeFocused;
+        }
     },
     actions: {
         changePlan({ commit }, payload) {
@@ -79,5 +83,8 @@ export default createStore({
         changeBussesToShow({ commit }, payload) {
             commit('CHANGE_BUSESS_TO_SHOW', payload);
         },
+        changeRouteFocused({ commit }, payload) {
+            commit('CHANGE_ROUTE_FOCUSED', payload);
+        }
     }
   });
