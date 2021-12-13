@@ -13,6 +13,7 @@
                 <p> <b> Bus Status: </b> {{ busStatus }} </p>
                 <!-- <p> Last Stop: {{ bus.stops[0].stop_name }} </p> -->
                 <p> <b> Bus Environmental Impact: </b> {{ bus.environmental_equity }} </p>
+                <p v-if="bus.converted"> <b> Remaining Charge: </b> {{ busLoc.properties.remainingCharge }}% </p>
             </div>
             <div class="flex1">
                 <div id="miles-chart-container" class="chart">
@@ -73,6 +74,9 @@ export default {
         },
         bus: function () {
             return this.planBusObj.buses.find((bus) => bus.id === this.busId);
+        },
+        busLoc: function () {
+            return this.$store.state.busLocations.features.find((busLoc) => busLoc.properties.id === this.busId);
         },
         converted: function () {
             return this.bus.converted ? 'Converted Bus' : 'Not Converted';
