@@ -13,6 +13,7 @@ import L from 'leaflet';
 import busRoutes from '../data/BusRoutes_UTA.json';
 import greenBusIcon from '../assets/images/busIconGreen.png';
 import busIcon from '../assets/images/busIcon.png';
+import orangeIcon from '../assets/images/orange_icon2.png';
 import chargingStationIcon from '../assets/images/chargingStation.png';
 import busStops from '../data/BusStops_UTA.json';
 import p20Stations from '../data/stationLocations/p20.json';
@@ -95,6 +96,12 @@ export default {
       return L.icon({
         iconUrl: greenBusIcon,
         iconSize: [30, 30],
+      });
+    },
+    pollutantIcon: function () {
+      return L.icon({
+        iconUrl: orangeIcon,
+        iconSize: [25, 25],
       });
     },
     stationPanelIcon: function () {
@@ -387,7 +394,17 @@ export default {
       });
       busStopOverlay.addTo(this.map);
 
-      const pollutantConcentrationOverlay = L.geoJson(pollutantConcentrations);
+      const ref = this;
+
+      const onEachFeature = function (feature, layer) {
+        layer.bindTooltip(`<p> PM2.5_ATM_ug/m3:<b> ${feature.properties.PM25} </b></p>`);
+      };
+      const pollutantConcentrationOverlay = L.geoJson(pollutantConcentrations, { 
+          pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, { icon: ref.pollutantIcon });
+          }, 
+          onEachFeature: onEachFeature
+      });
 
       const overlayGeojson = this.drawTazOverlay();
 
