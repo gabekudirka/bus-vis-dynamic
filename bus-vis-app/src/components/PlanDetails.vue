@@ -25,27 +25,27 @@
         <ul style="padding-left:0.5em">
             <li>
                 <p class="label"> <b>Total Cost: </b> </p>
-                <p class="plan-data"><span v-show="compare" class="smaller">Selected: </span> {{ planCost }} </p>
+                <p class="plan-data"><span v-show="compare" class="smaller">Selected Plan: </span> {{ planCost }} </p>
                 <p v-show="compare" class="plan-data compare-data"><span class="smaller">Comparison:</span> {{ compareCost }} </p>
             </li>
             <li>
                 <p class="label"> <b> Total Environmental Equity: </b> </p>
-                <p class="plan-data"><span v-show="compare" class="smaller">Selected: <br> </span> {{ planData.env_equity }} </p>
+                <p class="plan-data"><span v-show="compare" class="smaller">Selected Plan: </span> {{ planData.env_equity }} </p>
                 <p v-show="compare" class="plan-data compare-data"><span class="smaller">Comparison: </span>{{ compareData.env_equity }} </p>
             </li>
             <li>
                 <p class="label"> <b> Buses Converted: </b> </p>
-                <p class="plan-data"><span v-show="compare" class="smaller">Selected: </span> {{ planData.num_buses }} </p>
+                <p class="plan-data"><span v-show="compare" class="smaller">Selected Plan: </span> {{ planData.num_buses }} </p>
                 <p v-show="compare" class="plan-data compare-data"><span class="smaller">Comparison: </span>{{ compareData.num_buses }} </p>
             </li>
             <li>
                 <p class="label"> <b> Daily Miles Electrified: </b> </p>
-                <p class="plan-data"><span v-show="compare" class="smaller">Selected: </span> {{ planData.num_miles }} </p>
+                <p class="plan-data"><span v-show="compare" class="smaller">Selected Plan: </span> {{ planData.num_miles }} </p>
                 <p v-show="compare" class="plan-data compare-data"><span class="smaller">Comparison: </span>{{ compareData.num_miles }} </p>
             </li>
             <li>
                 <p class="label"> <b> Charging Stations: </b> </p>
-                <p class="plan-data"><span v-show="compare" class="smaller">Selected: </span> {{ planData.num_charging_stations }} </p>
+                <p class="plan-data"><span v-show="compare" class="smaller">Selected Plan: </span> {{ planData.num_charging_stations }} </p>
                 <p v-show="compare" class="plan-data compare-data"><span class="smaller">Comparison: </span>{{ compareData.num_charging_stations }} </p>
             </li>
         </ul>
