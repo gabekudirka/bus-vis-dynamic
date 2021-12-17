@@ -21,14 +21,15 @@ import busStops from '../data/BusStops_UTA.json';
 import p20Stations from '../data/stationLocations/p20.json';
 import p60Stations from '../data/stationLocations/p60.json';
 import p180Stations from '../data/stationLocations/p180.json';
-import tazRegions from '../data/supplementary_data/TAZ_with_data2.json';
+import tazRegions from '../data/supplementary_data/taz_region_data.json';
 import pollutantConcentrations from '../data/supplementary_data/pollutant_concentrations.json';
 
 export default {
   name: 'BusMap',
   data() {
     return {
-      center: [40.7608, -111.891],
+      center: [process.env.VUE_APP_COORDS_X, process.env.VUE_APP_COORDS_Y],
+      zoom: process.env.VUE_APP_ZOOM,
       map: null,
       busMarkers: null,
       stationMarkers: null,
@@ -59,6 +60,7 @@ export default {
       },
       selectedBus: -1,
       selectedRoute: -1,
+      selectedStation: -1,
       hoveredRoute: -1,
     };
   },
@@ -74,6 +76,9 @@ export default {
     },
     stateSelectedBus: function () {
       return this.$store.state.selectedBus;
+    },
+    stateSelectedStation: function () {
+      return this.$store.state.selectedStation;
     },
     routeFocused: function () {
       return this.$store.state.routeFocused;
@@ -115,6 +120,13 @@ export default {
         class: 'station'
       });
     },
+    stationPanelIconHighlighted: function () {
+      return L.icon({
+        iconUrl: chargingStationIcon,
+        iconSize: [50, 50],
+        class: 'station'
+      });
+    },
     info: function () {
       const info = L.control({ position: 'bottomleft' });
       info.onAdd = function (map) {
@@ -148,6 +160,7 @@ export default {
       this.stationMarkers.eachLayer((layer) => {
         this.map.removeLayer(layer);
       });
+      this.selectedStation = -1;
 
       if (this.plan === 'p20') {
         this.drawStationPanels(p20Stations);
@@ -169,7 +182,20 @@ export default {
           this.highlightBus(selectedLayer, this);
         }
       }
-    }
+    },
+    stateSelectedStation: function () {
+      if (this.stationMarkers != null) {
+        let selectedLayer = null;
+        this.stationMarkers.eachLayer((layer) => {
+          if (this.busLocations.features[layer.bus].properties.id === this.stateSelectedBus) {
+            selectedLayer = layer;
+          }
+        });
+        if (selectedLayer != null) {
+          this.highlightBus(selectedLayer, this);
+        }
+      }
+    },
   },
   methods: {
     drawStationPanels(stationLocations) {
@@ -186,6 +212,7 @@ export default {
               if (ref.showBusPanel) {
                 ref.$store.dispatch('changeShowBusses', false);
               }
+              ref.highlightStation(layer);
             }
         });
       }
@@ -197,6 +224,41 @@ export default {
       });
 
       this.stationMarkers.addTo(this.map);
+    },
+    highlightStation(layer) {
+      if (this.selectedBus !== -1) {
+        const oldBusLayer = this.busMarkers._layers[this.selectedBus];
+        const oldBus = this.busLocations.features[oldBusLayer.bus];
+        if (oldBus.properties.converted) {
+          oldBusLayer.setIcon(this.greenIcon);
+          oldBusLayer.setZIndexOffset(-50);
+        } else {
+          oldBusLayer.setIcon(this.blackIcon);
+          oldBusLayer.setZIndexOffset(-50);
+        }
+        this.selectedBus = -1;
+      }
+      const layerId = layer._leaflet_id;
+      if (this.selectedStation === -1) {
+        // if no station is selected, highlight the station
+        this.selectedStation = layerId;
+        layer.setIcon(this.stationPanelIconHighlighted);
+        layer.setZIndexOffset(50);
+      } else {
+        // if a station is selected, unhighlight the bus
+        const oldLayer = this.stationMarkers._layers[this.selectedStation];
+        oldLayer.setIcon(this.stationPanelIcon);
+        oldLayer.setZIndexOffset(-50);
+        if (layerId === this.selectedStation) {
+          // if the selected station is clicked, unselect it
+          this.selectedStation = -1;
+        } else {
+          // if another station is clicked, highlight it
+          this.selectedStation = layerId;
+          layer.setIcon(this.stationPanelIconHighlighted);
+          layer.setZIndexOffset(50);
+        }
+      }
     },
     drawBuses() {
       const ref = this;      
@@ -237,6 +299,13 @@ export default {
        this.busMarkers.addTo(this.map);
     },
     highlightBus(layer) {
+      if (this.selectedStation !== -1) {
+        const oldStationLayer = this.stationMarkers._layers[this.selectedStation];
+        oldStationLayer.setIcon(this.stationPanelIcon);
+        oldStationLayer.setZIndexOffset(-50);
+        this.selectedStation = -1;
+      }
+
       const layerId = layer._leaflet_id;
       const bus = this.busLocations.features[layer.bus];
       if (this.selectedBus === -1) {
@@ -402,7 +471,7 @@ export default {
      this.map = L.map(this.$refs.mapElement, {
         center: this.center,
         layers: [osmMap, googleSat],
-        zoom: 13,
+        zoom: this.zoom,
         doubleClickZoom: false,
       });
 

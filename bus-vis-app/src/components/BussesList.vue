@@ -119,7 +119,7 @@ export default {
                 return 0;
             }
             const bus = this.busLocations.features.find((b) => b.properties.id === busId.toString());
-            if (bus.properties.converted) {
+            if (bus && bus.properties.converted) {
                 return parseInt(bus.properties.remainingCharge, 10);
             }
             return 0; // if not converted don't show weird negative numbers
