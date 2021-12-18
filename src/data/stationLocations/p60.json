@@ -1,7 +1,0 @@
-{"type": "FeatureCollection", "features": [
-        {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-111.96022994462061, 40.693393996944955]}, "properties": {"stop_id": "6", "stop_name": "3650 S @ 2880 W", "num_stations": 1}}, 
-        {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-111.79688594572603, 40.687315016958394]}, "properties": {"stop_id": "7", "stop_name": "WASATCH BLVD @ 3900 S", "num_stations": 2}}, 
-        {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-111.90902247630167, 40.76310389555446]}, "properties": {"stop_id": "18", "stop_name": "300 S @ 600 W", "num_stations": 1}}, 
-        {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-111.9049840106926, 40.7746049937705]}, "properties": {"stop_id": "126", "stop_name": "490 W @ 240 N", "num_stations": 1}}
-    ]
-}

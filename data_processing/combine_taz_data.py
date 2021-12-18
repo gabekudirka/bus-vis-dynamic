@@ -9,8 +9,8 @@ base_taz_regions = json.load(f)
 f.close()
 
 # %%
-income_df = pd.read_csv('./data_input/3. Supplementary Data/Marginal_Income.csv')
-household_df = pd.read_csv('./data_input/3. Supplementary Data/SE_File_v83_SE19_Net19.csv')
+income_df = pd.read_excel('./data_input/3. Supplementary Data/5. Marginal_Income.xlsx')
+household_df = pd.read_excel('./data_input/3. Supplementary Data/6. SE_File_v83_SE19_Net19.xlsx')
 
 
 # %%
