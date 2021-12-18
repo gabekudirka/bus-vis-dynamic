@@ -40,9 +40,13 @@ data_input
         │ TAZ.dbf
         │ ...
 ```
+# From the command prompt run the following script to install required packages
+```
+install_packages.bat
+```
 
-# On the command line run the following from the bus-vis-app directory to process the data, create the
-# required directories, and install required packages
+# On the command line run the following from the bus-vis-app directory to process the data and create the 
+# required directories
 ```
 process_data.bat
 ```

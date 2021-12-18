@@ -19,9 +19,9 @@ with open('./data_input/2. Deployment Plans/1. Solutions/p20.txt') as p20, open(
     p180_data = p180.readlines()
 
 #%%
-UTA_runcut_df = pd.read_excel('./data_input/1. Network Data/3. UTA Runcut File  Aug2016.xlsx', header=0)
-UTA_stops_df = pd.read_excel('./data_input/2. Deployment Plans/2. UTA_Runcut_Potential_Stop.xlsx', header=0)
-bus_env_impact_df = pd.read_excel('./data_input/3. Supplementary Data/8. Ei_for_bus.xlsx', header=0)
+UTA_runcut_df = pd.read_csv('./data_input/1. Network Data/3. UTA Runcut File  Aug2016.csv', header=0)
+UTA_stops_df = pd.read_csv('./data_input/2. Deployment Plans/2. UTA_Runcut_Potential_Stop.csv', header=0)
+bus_env_impact_df = pd.read_csv('./data_input/3. Supplementary Data/8. Ei_for_bus.csv', header=0)
 
 #%%
 def Extract_Bus_Data(raw_deployment_data, UTA_schedule_df, UTA_stops_df, env_impact_df):

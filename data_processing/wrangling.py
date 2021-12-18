@@ -116,7 +116,7 @@ for plan in planNames:
             if s["stopName"].replace(" ", "") == cs["stop_name"].replace(" ", ""):
                 coords = s["coordinates"]
         if coords == []:
-            print("NO COORDS", cs)
+            continue
         geo = {'type': 'Point', 'coordinates': coords}
         ob = {'type': 'Feature', 'geometry': geo, 'properties': cs}
         statLocs['features'].append(ob)
@@ -130,8 +130,8 @@ for plan in planNames:
         time = datetime.time(i)
         for bus in dataBuses['buses']:
             for stp in bus['stops']:
-                arvtime = datetime.time(0) if (stp['arrival_time'] == '') else datetime.time(int(stp['arrival_time'].split(":")[0]), int(stp['arrival_time'].split(":")[1]))
-                deptime = datetime.time(23,59) if (stp['departure_time'] == '') else datetime.time(int(stp['departure_time'].split(":")[0]), int(stp['departure_time'].split(":")[1]))
+                arvtime = datetime.time(0) if (stp['arrival_time'] == '' or stp['arrival_time'] == None) else datetime.time(int(stp['arrival_time'].split(":")[0]), int(stp['arrival_time'].split(":")[1]))
+                deptime = datetime.time(23,59) if (stp['departure_time'] == '' or stp['departure_time'] == None) else datetime.time(int(stp['departure_time'].split(":")[0]), int(stp['departure_time'].split(":")[1]))
                 if arvtime <= time and time <= deptime: #at stop
                     if stp['stop_name'] not in stations:
                         stations[stp['stop_name']] = {'stop_id': stp['stop_id'], 'stop_name': stp['stop_name'], 'busTimes': {}}

@@ -16,7 +16,7 @@ with open('./data_input/2. Deployment Plans/1. Solutions/p20.txt') as p20, open(
     p60_data = p60.readlines()
     p180_data = p180.readlines()
 
-UTA_stops_df = pd.read_excel('./data_input/2. Deployment Plans/2. UTA_Runcut_Potential_Stop.xlsx', header=0)
+UTA_stops_df = pd.read_csv('./data_input/2. Deployment Plans/2. UTA_Runcut_Potential_Stop.csv', header=0)
 
 # %%
 def Extract_Plan_Data(raw_deployment_data, UTA_stops_df, plan_name):

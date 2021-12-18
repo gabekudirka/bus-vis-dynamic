@@ -486,13 +486,13 @@ export default {
       });
       busStopOverlay.addTo(this.map);
 
-      const pollutantConcentrationOverlay = this.drawPollutantConcentrationOverlay();
+      // const pollutantConcentrationOverlay = this.drawPollutantConcentrationOverlay();
 
       const economicOverlay = this.drawTazOverlay();
 
       const overlays = {
         'Economic Data by Region': economicOverlay,
-        'Pollutant Concentrations': pollutantConcentrationOverlay,
+        // 'Pollutant Concentrations': pollutantConcentrationOverlay,
         'Bus Stops': busStopOverlay,  
         'Bus Routes': this.routesOverlay,
       };
@@ -516,9 +516,9 @@ export default {
       this.map.on('overlayremove', (e) => {
         if (e.name === 'Economic Data by Region') {
           this.economicLegend.remove();
-          if (!this.map.hasLayer(pollutantConcentrationOverlay)) {
-            this.info.remove();
-          }
+          // if (!this.map.hasLayer(pollutantConcentrationOverlay)) {
+          //   this.info.remove();
+          // }
         } else if (e.name === 'Pollutant Concentrations') {
           this.pollutantLegend.remove();
           if (!this.map.hasLayer(economicOverlay)) {
