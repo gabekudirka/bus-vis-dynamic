@@ -3,10 +3,15 @@
 # Create a directory inside of bus-vis-app called 'data_input'
 
 # Move all of the electric bus data into data_input so that the file structure looks like this
+# IMPORTANT: Due to difficulties handling excel files, '2. UTA_Runcut_Potential_Stop.xls' and
+# '3. UTA Runcut File  Aug2016.xlsx' must be converted to csv files. To do this, open the xls/xlsx
+# file in excel and save as a csv file.
+
 ```
 data_input
 │
 └───1. Network Data
+    │   3. UTA Runcut File  Aug2016.xlsx
 │   │   3. UTA Runcut File  Aug2016.csv
 │   │   metadata.txt
 │   │
@@ -21,6 +26,7 @@ data_input
 │        │ ...    
 │   
 └───2. Deployment Plans
+│    │   2. UTA_Runcut_Potential_Stop.xls
 │    │   2. UTA_Runcut_Potential_Stop.csv
 │    │   metadata.txt
 │    │
@@ -46,7 +52,7 @@ install_packages.bat
 ```
 
 # On the command line run the following from the bus-vis-app directory to process the data and create the 
-# required directories
+# required directories (Ignore warnings in command line)
 ```
 process_data.bat
 ```
