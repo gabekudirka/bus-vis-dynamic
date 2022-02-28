@@ -2,8 +2,8 @@
 
 ### Create a directory inside of bus-vis-app called 'data_input'
 
-Move all of the electric bus data into data_input so that the file structure looks like this
-IMPORTANT: Due to difficulties handling excel files, '2. UTA_Runcut_Potential_Stop.xls' and
+### Move all of the electric bus data into data_input so that the file structure looks like this
+***IMPORTANT***: Due to difficulties handling excel files, '2. UTA_Runcut_Potential_Stop.xls' and
 3. UTA Runcut File  Aug2016.xlsx' must be converted to csv files. To do this, open the xls/xlsx
 file in excel and save as a csv file.
 

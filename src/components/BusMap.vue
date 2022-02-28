@@ -473,7 +473,7 @@ export default {
 
      this.map = L.map(this.$refs.mapElement, {
         center: this.center,
-        layers: [osmMap, googleSat],
+        layers: [googleSat, osmMap],
         zoom: this.zoom,
         doubleClickZoom: false,
       });
@@ -501,8 +501,8 @@ export default {
       };
 
       const baseMaps = {
-        'Open Street Maps': osmMap,
         'Google Sattelite': googleSat,
+        'Open Street Maps': osmMap,
       };
 
       L.control.layers(baseMaps, overlays).addTo(this.map);
