@@ -1,11 +1,11 @@
 # Electric Bus Visualization Setup:
 
-## Create a directory inside of bus-vis-app called 'data_input'
+### Create a directory inside of bus-vis-app called 'data_input'
 
-## Move all of the electric bus data into data_input so that the file structure looks like this
-## IMPORTANT: Due to difficulties handling excel files, '2. UTA_Runcut_Potential_Stop.xls' and
-## '3. UTA Runcut File  Aug2016.xlsx' must be converted to csv files. To do this, open the xls/xlsx
-## file in excel and save as a csv file.
+Move all of the electric bus data into data_input so that the file structure looks like this
+IMPORTANT: Due to difficulties handling excel files, '2. UTA_Runcut_Potential_Stop.xls' and
+3. UTA Runcut File  Aug2016.xlsx' must be converted to csv files. To do this, open the xls/xlsx
+file in excel and save as a csv file.
 
 ```
 data_input
@@ -46,23 +46,22 @@ data_input
         │ TAZ.dbf
         │ ...
 ```
-## From the command prompt run the following script to install required packages
+### From the command prompt run the following script to install required packages
 ```
 install_packages.bat
 ```
 
-## On the command line run the following from the bus-vis-app directory to process the data and create the required directories (Ignore warnings in command line)
+### On the command line run the following from the bus-vis-app directory to process the data and create the required directories (Ignore warnings in command line)
 ```
 process_data.bat
 ```
 
-## On the command line run the following from the bus-vis-app directory to set the coordinates of the region
-## of interest and set the default zoom level of the map
+### On the command line run the following from the bus-vis-app directory to set the coordinates of the region of interest and set the default zoom level of the map
 ```
 set_city_coordinates.bat
 ```
-## Run the app with the following command
+### Run the app with the following command
 ```
 npm run serve
 ```
-## The app will now be running at localhost:8080
+### The app will now be running at localhost:8080
