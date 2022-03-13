@@ -2,6 +2,7 @@ import json
 import openpyxl
 import datetime
 import itertools
+import numpy as np
 
 datafolder = "data_input"
 
@@ -143,24 +144,48 @@ for plan in planNames:
 with open(busesAtStations, 'w') as outfile:
     json.dump(stations, outfile)
 
-#route sort! Takes in a list of coordinates and sorts them into a connected list
+#pick a coord
+#find min and max
+#while len allList
+#if we didn't find any, pick a different coord and start another list
+#at the end see if we can combine lists
 def sortRoutePath(rt):
     coords = rt['coordinates']
-    head = rt['coordinates'][0][0] #start at the beginning. Could be anywhere tho
+    head = rt['coordinates'][0][0]
     tail = rt['coordinates'][0][1]
+    i = 0
     lsts = [ [rt['coordinates'][0]] ]
     del coords[0]
-    i = 0
     noneFound = False
     while len(coords):
-        if noneFound: #can't add any more to that list, start a new one with new seed
-            i += 1
+        if noneFound: #pick a new seed
             r = 0 #random.randrange(0, len(coords))
-            lsts.append([coords[r]])
+            
+            ##Where to add new list (based on closest head/end coordinates)
+            #find closest head-tail
+            hd = np.array(coords[r][0])
+            tails = np.array([lst[-1] for lst in lsts])
+            distsHd = np.linalg.norm(tails-hd, axis=1)
+            #and closest tail-head
+            tl = np.array(coords[r][1])
+            heads = np.array([lst[0] for lst in lsts])
+            distsTl = np.linalg.norm(heads-tl, axis=1)
+            #Check which is shorter distance
+            if np.min(distsHd) <= np.min(distsTl):
+                #if head-tail, add after nearest point
+                i = np.argmin(distsHd)+1
+                lsts.insert(i, [coords[r]])
+                if i >= len(lsts): i = len(lsts)-1
+            else:
+                #if tail-head, add before nearest point
+                i = np.argmin(distsTl)
+                lsts.insert(i, [coords[r]])
+                if i >= len(lsts): i = len(lsts)-1
+            
             head = coords[r][0]
             tail = coords[r][1]
             del coords[r]
-        for c in coords: #find new head or tail
+        for c in coords:
             noneFound = True
             if c[1] == head:
                 lsts[i].insert(0, c)
@@ -175,9 +200,7 @@ def sortRoutePath(rt):
                 noneFound = False
                 break
 
-    #See if we can combine any of the lists
-    #**This is where we should apply nearest neighbor
-    for l1 in lsts: 
+    for l1 in lsts:
         for l2 in lsts:
             if l1 == l2:
                 continue
@@ -185,18 +208,19 @@ def sortRoutePath(rt):
                 l1 = l2 + l1
             elif l1[-1][1] == l2[0][0]:
                 l1 = l1 + l2
-            
-    #otherwise just concat and hope there was some reason for the order they gave us these points in
+
     all = list(itertools.chain.from_iterable(lsts))
     return all
 
-#sort the coordinates into one path (as close as we can with stupid data)
-routes = json.load(open(allRoutes))
+routes = json.load(open("allRoutesOFF.json"))
 for rt in routes:
     rt['coordinates'] = sortRoutePath(rt)
+#works to order points, but will do so according to value (closes points), not time-based data or loops may not work
+
+with open('allRoutes.json', 'w') as outfile:
+    json.dump(routes, outfile)
+
 print("sorted", len(routes), "routes")
 
-#write it
-with open(allRoutes, 'w') as outfile:
-    json.dump(routes, outfile)
+    
     
