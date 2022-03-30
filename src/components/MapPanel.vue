@@ -97,11 +97,10 @@ export default {
                             break;
                         }
                     // if dpt <= t <= next.arv   -> between stops.
-                    // TODO: This is where we calculate between coordinates
+                    // This is where we calculate between coordinates
                     } else if (deptime <= curTime && curTime <= nextArvtime) {
                         // calc coords
                         const coords = this.calcBusCoords(stp, bus.stops[i + 1], bus.line);
-                        // console.log('Here2', coords, stp);
                         if (coords !== '') {
                             busLocs.features.push(this.geoJsonObj(bus.id, coords, bus.converted, bus.line, stp.remaining_charge));
                             break;
@@ -111,7 +110,6 @@ export default {
                         }
                     // t <= arv   -> usually means bus has not left the station for the day        
                     } else if (curTime <= arvtime) {
-                        // console.log('Here3', stp);
                         const stationObj = stopsList.find((station) => station.stopName === stp.stop_name);
                         if (stationObj) {
                             busLocs.features.push(this.geoJsonObj(bus.id, stationObj.coordinates, bus.converted, bus.line, stp.remaining_charge));
