@@ -8,21 +8,21 @@
     <ul id="busList">
         <li class="header">
             <input type="checkbox" v-model="allOn" @change="checkAll()" style="margin:0 0.6em"/>
-            <div @click="sortBusses('busNo')">Bus No.</div> 
-            <div @click="sortBusses('route')">Line</div> 
-            <div @click="sortBusses('envEquity')">Env. Equity</div> 
-            <div @click="sortBusses('battery')">Battery</div>
+            <div class="row-section-md" @click="sortBusses('busNo')">Bus No.</div> 
+            <div class="row-section-sm"  @click="sortBusses('route')">Line</div> 
+            <div class="row-section-lg" @click="sortBusses('envEquity')">Env. Equity</div> 
+            <div class="row-section-md" @click="sortBusses('battery')">Battery</div>
         </li>
         <li v-for="item in planBusses" 
             :key="item.id"
             :class="[item.id == selectedBus ? 'selected' : '', 'listItem']"
             @click="selectItem(item.id)"
         > 
-            <input type="checkbox" name="check" checked="true" @change="checkOne(item.id)"/>
-            <div><i :class="[item.converted? '' : 'hidden', 'fas fa-plug']"></i>{{ item.id }}</div>
-            <div>{{item.line}}</div>
-            <div>{{item.environmental_equity}}</div>
-            <div>{{getBatteryLevel(item.id)}}%</div>
+            <input class="row-section-checkbox" type="checkbox" name="check" checked="true" @change="checkOne(item.id)"/>
+            <div class="row-section-md"><i :class="[item.converted? '' : 'hidden', 'fas fa-plug']"></i>{{ item.id }}</div>
+            <div class="row-section-sm">{{item.line}}</div>
+            <div class="row-section-lg">{{item.environmental_equity}}</div>
+            <div class="row-section-md">{{getBatteryLevel(item.id)}}%</div>
         </li>
     </ul>
   </div>
@@ -225,13 +225,25 @@ ul#busList > li:nth-of-type(odd) {
 }
 .listItem{
     padding: 0.6em;
-    text-align:left;
+    text-align:center;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 .hidden{
     visibility: hidden;
+}
+.row-section-checkbox{
+    width: 5%;
+}
+.row-section-sm{
+    width: 10%;
+}
+.row-section-md{
+    width: 15%;
+}
+.row-section-lg{
+    width: 20%;
 }
 
 </style>

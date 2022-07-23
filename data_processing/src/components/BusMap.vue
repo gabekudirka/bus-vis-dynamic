@@ -16,7 +16,7 @@ import busRoutes from '../data/BusRoutes_UTA.json';
 import greenBusIcon from '../assets/images/busIconGreen.png';
 import busIcon from '../assets/images/busIcon.png';
 import orangeIcon from '../assets/images/orange_icon2.png';
-import chargingStationIcon from '../assets/images/chargingStation.png';
+import chargingStationIcon from '../assets/images/chargingStationBlue.png';
 import busStops from '../data/BusStops_UTA.json';
 import p20Stations from '../data/stationLocations/p20.json';
 import p60Stations from '../data/stationLocations/p60.json';

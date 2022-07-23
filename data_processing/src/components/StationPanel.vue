@@ -20,7 +20,7 @@
             </div>
             <div class="flex1">
                 <div v-show="selectedStation.converted" id="charge-chart-container" class="chart">
-                    <p class="chart-title"> <b> Num Buses at Station </b> </p>
+                    <p class="chart-title"> <b> Buses at Station </b> </p>
                     <PanelChart
                         :key="stationChartData"
                         :data="stationChartData"
