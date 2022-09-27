@@ -35,6 +35,7 @@ css classes used in the application.
 stations. All of interactions on the map like clicking on busses and routes are also handled in this file.
 Whenever changes are made in other panels of the application like the time of day, selected bus, or deployment plan,
 those changes are watched for in this file and are then reflected on the map.
+
 'BusPanel.vue' loads in the data for a selected bus and displays it on the bottom panel. It also
 calls the PanelChart component with the currently selected data to draw the graph visualizations.
 
