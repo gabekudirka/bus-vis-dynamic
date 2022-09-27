@@ -105,7 +105,7 @@ export default {
                     break;
             }
 
-            const svg = d3.selectAll(`#${this.chartName}`);JSON
+            const svg = d3.selectAll(`#${this.chartName}`);
             svg.append('path')
                 .classed(this.innerClass, true)
                 .attr('d', line(this.data))
